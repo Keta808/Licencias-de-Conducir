@@ -6,9 +6,14 @@ const bcrypt = require("bcryptjs");
 // Crea el esquema de la coleccion 'usuarios'
 const userSchema = new mongoose.Schema(
   {
-    username: {
+    nombre: {
       type: String,
       required: true,
+    },
+    rut: {
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -18,7 +23,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-    },
+    },  
     roles: [
       {
         type: mongoose.Schema.Types.ObjectId,
