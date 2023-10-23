@@ -22,11 +22,11 @@ const router = express.Router();
 // Define las rutas para los usuarios /api/usuarios
 router.use("/users", authenticationMiddleware, userRoutes);
 // Define las rutas para la autenticación /api/auth
-<<<<<<< HEAD
+
 router.use("/auth", authRoutes);
 //define la ruta para horas
 router.use("/horas", authenticationMiddleware, horaRoutes);
-=======
+
 router.use("/auth", authRoutes); 
 
 
@@ -35,7 +35,6 @@ router.use("/auth", authRoutes);
 // router.use("/licencias", licenciasRoutes); 
 
 router.use("/postulacion", postulacionRoutes);
->>>>>>> 9a748ae64b97f7f274c6c561581e72fb903a1816
 
 // Exporta el enrutador
 module.exports = router;
