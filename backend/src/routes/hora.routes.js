@@ -13,16 +13,18 @@ router.use(authenticationMiddleware);
 
 
 //define las rutas para las horas
-router.get("/", authorizationMiddleware.isAdmin, horaController.getHoras);
+router.get("/", authorizationMiddleware.isAdmin,authorizationMiddleware.isFuncionario, horaController.getHoras);
 router.get("/disponibles",horaController.getHorasDisponibles);
-router.post("/", authorizationMiddleware.isAdmin, horaController.createHora);
-router.get("/:id",authorizationMiddleware.isAdmin, horaController.getHoraById);
+router.post("/", authorizationMiddleware.isAdmin,authorizationMiddleware.isFuncionario, horaController.createHora);
+router.get("/:id",authorizationMiddleware.isAdmin,authorizationMiddleware.isFuncionario, horaController.getHoraById);
 router.put("/:id",
-authorizationMiddleware.isAdmin, 
+authorizationMiddleware.isAdmin,
+authorizationMiddleware.isFuncionario,
 horaController.updateHora
 );
 router.delete("/:id",
 authorizationMiddleware.isAdmin,
+authorizationMiddleware.isFuncionario,
 horaController.deleteHora
 );
 
