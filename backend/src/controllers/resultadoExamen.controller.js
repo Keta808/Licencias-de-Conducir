@@ -1,4 +1,4 @@
-const e = require("express");
+
 const ResExamen = require("../models/resultadoExamen.model.js"); 
 
 
@@ -78,6 +78,30 @@ exports.updateResExamenByRut = async (req, res) => {
   } catch (error) { 
     res.status(500).json({ error: "Error al actualizar el resultado de examen." }); 
   }
+ };
+// Controlador para obtener un resultado de examen por su rut de usuario  
+exports.getResExamenByRut = async (req, res) => {
+  try {
+    const resExamen = await ResExamen.find({ rut: req.params.rut });
+    res.json(resExamen);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener el resultado de examen." });
+  }   
+}; 
+
+// Controlador para obtener un resultado de examen por su rut de usuario 
+exports.getResExamenByRut = async (req, res) => {
+  try {
+    const resExamen = await ResExamen.find({ rut: req.params.rut });
+    res.json(resExamen);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener el resultado de examen." });
+  }
 };
 
-// 
+
+// Controlador para enviar por correo electronico un resultado de examen 
+exports.enviarResExamen = async (req, res) => {
+  
+}; 
+

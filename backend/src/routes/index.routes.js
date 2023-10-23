@@ -13,7 +13,7 @@ const postulacionRoutes = require("./postulacion.routes.js");
 /** Middleware de autenticación */
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
 
-/**Enrutador de horas */
+/** Enrutador de horas */
 const horaRoutes = require("./hora.routes.js");
 
 /** Instancia del enrutador */
@@ -24,15 +24,15 @@ router.use("/users", authenticationMiddleware, userRoutes);
 // Define las rutas para la autenticación /api/auth
 
 router.use("/auth", authRoutes);
-//define la ruta para horas
+// define la ruta para horas
 router.use("/horas", authenticationMiddleware, horaRoutes);
 
 router.use("/auth", authRoutes); 
 
 
 // Define rutas opara las licencias 
-// router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
-// router.use("/licencias", licenciasRoutes); 
+ router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
+  
 
 router.use("/postulacion", postulacionRoutes);
 
