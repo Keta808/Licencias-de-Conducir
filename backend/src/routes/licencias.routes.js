@@ -24,4 +24,5 @@ router.get("/:numeroLicencia", LicenciasController.getLicenciaById);
 router.get("/:rut", LicenciasController.getLicenciaByRut); 
 
 // router.put("/:numeroLicencia", authorizationMiddleware.isAdmin, updateLicenciaById); // Actualiza una licencia por su id de licencia
-
+// router.delete("/:numeroLicencia", authorizationMiddleware.isAdmin, deleteLicenciaById); // Elimina una licencia por su id de licencia
+module.exports = router; 
