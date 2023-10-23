@@ -19,3 +19,42 @@ exports.getLicencias = async () => {
   }
 }; 
 
+// servicio para obtener una licencia por su id de licencia (numeroLicencia)
+exports.getLicenciaById = async (numeroLicencia) => {
+  try {
+    return await Licencia.findById(numeroLicencia);
+  } catch (error) {
+    throw new Error("Error al obtener la licencia.");
+  }
+};
+
+// servicio para obtener una licencia por su rut de usuario 
+exports.getLicenciaByRut = async (rut) => {
+  try {
+    return await Licencia.findOne({ rut: rut });
+  } catch (error) {
+    throw new Error("Error al obtener la licencia.");
+  }
+};
+
+
+// Servicio para actualizar una licencia por su id de licencia (numeroLicencia) 
+exports.updateLicenciaById = async (numeroLicencia, licenciaData) => {
+  try {
+    return await Licencia.findByIdAndUpdate(numeroLicencia, licenciaData, {
+      new: true,
+    });
+  } catch (error) {
+    throw new Error("Error al actualizar la licencia.");
+  }
+}; 
+
+// Servicio para eliminar una licencia por su id de licencia (numeroLicencia)
+exports.deleteLicenciaById = async (numeroLicencia) => {
+  try {
+    return await Licencia.findByIdAndDelete(numeroLicencia);
+  } catch (error) {
+    throw new Error("Error al eliminar la licencia.");
+  }
+}; 
+
