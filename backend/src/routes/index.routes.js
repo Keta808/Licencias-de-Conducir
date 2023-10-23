@@ -19,7 +19,12 @@ const router = express.Router();
 // Define las rutas para los usuarios /api/usuarios
 router.use("/users", authenticationMiddleware, userRoutes);
 // Define las rutas para la autenticación /api/auth
-router.use("/auth", authRoutes);
+router.use("/auth", authRoutes); 
+
+
+// Define rutas opara las licencias /api/licencias 
+// router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
+// router.use("/licencias", licenciasRoutes); 
 
 router.use("/postulacion", postulacionRoutes);
 
