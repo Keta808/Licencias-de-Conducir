@@ -68,12 +68,13 @@ async function getHoraById(req,res){
         const { error: paramsError } = horaIdSchema.validate(params);
         if (paramsError) return respondError(req, res, 400, paramsError.message);
 
-        const [hora, errorHora] = await HoraService.getHoraById(params.id);
+        const [hora, errorHora] = await HoraService.getHorabyId(params.id);
 
         if (errorHora) return respondError(req, res, 404, errorHora);
 
         respondSuccess(req, res, 200, hora);
     } catch (error) {
+        console.log(error, "aa ")
         handleError(error, "hora.controller -> getHoraById");
         respondError(req, res, 400, error.message);
     }

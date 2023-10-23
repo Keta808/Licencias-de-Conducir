@@ -69,6 +69,7 @@ async function getHorabyId(id) {
 
         return [hora, null];
     } catch (error) {
+        
         handleError(error, "hora.service -> getHoraById");
     }
 }
