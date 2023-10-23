@@ -30,7 +30,7 @@ router.use("/horas", authenticationMiddleware, horaRoutes);
 router.use("/auth", authRoutes); 
 
 
-// Define rutas opara las licencias /api/licencias 
+// Define rutas opara las licencias 
 // router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
 // router.use("/licencias", licenciasRoutes); 
 
