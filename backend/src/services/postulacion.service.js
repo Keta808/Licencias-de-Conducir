@@ -1,6 +1,7 @@
 "use strict";
 
 const Postulacion = require("../models/postulacion.model.js");
+const { handleError } = require("../utils/errorHandler");
 /**
  * Servicio que se conecta con la BD para traer la lista de postulaciones
 */
@@ -11,7 +12,7 @@ async function getPostulaciones() {
 
         return [postulaciones, null];
     } catch (error) {
-        
+        handleError(error, "postulacion.service -> getPostulaciones");
     }
 }
 
@@ -20,7 +21,7 @@ async function getPostulaciones() {
  */
 async function createPostulaciones(postulacion) {
     try {
-        const { nombre, rut, email, direccion, tramite, documentoPDF } = postulacion;
+        const { nombre, rut, direccion, tramite } = postulacion;
 
         const postulacionFound = await Postulacion.findOne({ rut: postulacion.rut });
         if (postulacionFound) return [null, "La postulacion ya existe"];
@@ -28,10 +29,9 @@ async function createPostulaciones(postulacion) {
         const newPostulacion = new Postulacion({
             nombre,
             rut,
-            email,
             direccion,
             tramite,
-            documentoPDF,
+
         });
         await newPostulacion.save();
 
@@ -60,7 +60,7 @@ async function getPostulacionById(id) {
  */
 async function updatePostulacion(id, postulacion) {
     try {
-        const { nombre, rut, email, direccion, tramite, documentoPDF } = postulacion;
+        const { nombre, rut, email, direccion, tramite } = postulacion;
 
         const postulacionFound = await Postulacion.findById(id);
         if (!postulacionFound) return [null, "La postulacion no existe"];
@@ -71,7 +71,6 @@ async function updatePostulacion(id, postulacion) {
             email,
             direccion,
             tramite,
-            documentoPDF,
         }, { new: true });
 
         return [postulacionUpdated, null];

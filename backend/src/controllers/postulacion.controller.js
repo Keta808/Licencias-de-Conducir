@@ -3,9 +3,10 @@
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
 const PostulacionService = require("../services/postulacion.service");
+const { postulacionBodySchema, postulacionIdSchema } = require("../schema/postulacion.schema");
 
 /** Controlador que se uiliza para manejar las respuestas y peticiones a las rutas*/
-async function getPostulaciones() {
+async function getPostulaciones(req, res) { 
     try {
         const [postulaciones, errorPostulaciones] = await PostulacionService.getPostulaciones();
         if (errorPostulaciones) return respondError(req, res, 404, errorPostulaciones);

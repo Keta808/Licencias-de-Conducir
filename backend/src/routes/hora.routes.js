@@ -12,21 +12,18 @@ const router = express.Router();
 router.use(authenticationMiddleware);
 
 
-//define las rutas para las horas
+// define las rutas para las horas
 router.get("/", authorizationMiddleware.isAdmin, horaController.getHoras);
-router.get("/disponibles",horaController.getHorasDisponibles);
+router.get("/disponibles", horaController.getHorasDisponibles);
 router.post("/", authorizationMiddleware.isAdmin, horaController.createHora);
-router.get("/:id",authorizationMiddleware.isAdmin, horaController.getHoraById);
+router.get("/:id", authorizationMiddleware.isAdmin, horaController.getHoraById);
 router.put("/:id",
 authorizationMiddleware.isAdmin, 
-horaController.updateHora
+horaController.updateHora,
 );
 router.delete("/:id",
 authorizationMiddleware.isAdmin,
-horaController.deleteHora
+horaController.deleteHora,
 );
 
 module.exports = router;
-
-
-
