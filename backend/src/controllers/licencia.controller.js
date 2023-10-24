@@ -1,118 +1,123 @@
-const Licencia = require("../models/licencia.model.js"); // Importa el modelo de licencia
 
-// const LicenciasServices= require("../services/licencia.service.js");
-
-
-// Controlador para crear una nueva licencia
-exports.createLicencia = async (req, res) => {
+const LicenciasServices = require("../services/licencia.service.js");
+const { respondSuccess, respondError } = require("../utils/resHandler");
+const { handleError } = require("../utils/errorHandler");
+const { licenciaBodySchema, licenciaIdSchema } = require("../schema/licencia.schema");
+/**
+ * Creates a new license.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
+async function createLicencia(req, res) {
   try {
-    const nuevaLicencia = new Licencia(req.body);
-    const licenciaGuardada = await nuevaLicencia.save();
-    res.status(201).json(licenciaGuardada);
-  } catch (error) {
-    res.status(500).json({ error: "Error al crear la licencia." });
-  }
-};
-
-// Controlador para obtener todas las licencias
-exports.getLicencia = async (req, res) => {
-  try {
-    const licencias = await Licencia.find();
-    res.json(licencias);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener las licencias." });
-  }
-};
-
-
-// Controlador para obtener una licencia por su id de licencia 
-exports.getLicenciaById = async (req, res) => {
-  try {
-    const licencia = await Licencia.findById(req.params.nuevaLicencia);
-    res.json(licencia);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener la licencia." });
-  }
-}; 
-
-// Controlador para obtener una licencia por su rut de usuario 
-exports.getLicenciaByRut = async (req, res) => {
-  try {
-    const licencia = await Licencia.findOne({ rut: req.params.rut });
-    res.json(licencia);
-  } catch (error) {
-    res.status(500).json({ error: "Error al obtener la licencia." });
-  }
-}; 
-
-// Controlador para actualizar una licencia por su id de licencia 
-exports.updateLicenciaById = async (req, res) => { 
-    try {
-        const LicenciaUpdated = await User.findByIdAndUpdate(
-           nuevaLicencia,
-            {
-                FechaRetiro: req.body.FechaRetiro,
-                EstadoLicencia: req.body.EstadoLicencia,
-                pdfDocumento: req.body.pdfDocumento,
-            },
-            { new: true }, // Devuelve el nuevo objeto actualizado
-          );
-          
-        res.json({ mensaje: "La licencia se ha actualizado." });
-        return [LicenciaUpdated, null];
-    } catch (error) {
-        res.status(500).json({ error: "Error al actualizar la licencia." });
+    const { body } = req;
+    const { error: bodyError } = licenciaBodySchema.validate(body);
+    if (bodyError) return respondError(req, res, 400, bodyError.message);
+    const [newLicencia, licenciaError] = await LicenciasServices.createLicencia(body);
+    if (licenciaError) return respondError(req, res, 400, licenciaError);
+    if (!newLicencia) {
+      return respondError(req, res, 400, "No se creo la licencia");
     }
-};  
-
-// Controlador para actualizar una licencia por su rut de usuario
-exports.updateLicenciaByRut = async (req, res) => { 
-  try {
-      const LicenciaUpdated = await User.findOneAndUpdate(
-         rut,
-          {
-              FechaRetiro: req.body.FechaRetiro || FechaRetiro,
-              EstadoLicencia: req.body.EstadoLicencia || EstadoLicencia,
-              pdfDocumento: req.body.pdfDocumento || pdfDocumento,
-          },
-          { new: true }, // Devuelve el nuevo objeto actualizado
-        );
-        
-      res.json({ mensaje: "La licencia se ha actualizado." });
-      return [LicenciaUpdated, null];
+    respondSuccess(req, res, 201, newLicencia);
   } catch (error) {
-      res.status(500).json({ error: "Error al actualizar la licencia." });
+    handleError(error, "licencia.controller -> createLicencia");
+    respondError(req, res, 500, "No se creo la licencia");
+  }
+}; 
+
+/**
+ * Retrieves all licenses.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
+async function getLicencias(req, res) {
+  try {
+    const [licencias, errorLicencias] = await LicenciasServices.getLicencias();
+    if (errorLicencias) {
+      return respondError(req, res, 404, errorLicencias);
+    }
+    licencias.length === 0
+      ? respondSuccess(req, res, 204)
+      : respondSuccess(req, res, 200, licencias);
+  } catch (error) {
+    handleError(error, "licencia.controller -> getLicencias");
+    respondError(req, res, 400, error.message);
   }
 };
 
-// Controlador para eliminar una licencia por su id de licencia 
-exports.deleteLicenciaById = async (req, res) => {
+
+/**
+ * Retrieves a license by its RUT.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
+async function getLicenciaByRut(req, res) {
   try {
-    await Licencia.findByIdAndDelete(req.params.numeroLicencia);
-    res.json({ mensaje: "La licencia se ha eliminado." });
+    const { params } = req;
+    const { error: paramsError } = licenciaIdSchema.validate(params);
+    if (paramsError) return respondError(req, res, 400, paramsError.message);
+    const [licencia, errorLicencia] = await LicenciasServices.getLicenciaByRut(params.rut);
+    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
+    respondSuccess(req, res, 200, licencia);
   } catch (error) {
-    res.status(500).json({ error: "Error al eliminar la licencia." });
+    handleError(error, "licencia.controller -> getLicenciaByRut");
+    respondError(req, res, 400, error.message);
   }
-}; 
+};
 
-
-// Controlador para eliminar una licencia por su rut de usuario
-exports.deleteLicenciaByRut = async (req, res) => {
+/**
+ * Updates a license by its RUT.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
+async function updateLicenciaByRut(req, res) {
   try {
-    await Licencia.findOneAndDelete(req.params.rut);
-    res.json({ mensaje: "La licencia se ha eliminado." });
+    const { params, body } = req;
+    const { error: paramsError } = licenciaIdSchema.validate(params);
+    if (paramsError) return respondError(req, res, 400, paramsError.message);
+    const { error: bodyError } = licenciaBodySchema.validate(body);
+    if (bodyError) return respondError(req, res, 400, bodyError.message);
+    const [updatedLicencia, errorLicencia] = await LicenciasServices.updateLicenciaByRut(
+      params.rut,
+      body,
+    );
+    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
+    respondSuccess(req, res, 200, updatedLicencia);
   } catch (error) {
-    res.status(500).json({ error: "Error al eliminar la licencia." });
+    handleError(error, "licencia.controller -> updateLicenciaByRut");
+    respondError(req, res, 400, error.message);
   }
-}; 
+};
 
-
-// Controlador para enviar una licencia por correo electronico 
-exports.sendLicenciaByEmail = async (req, res) => {
+/**
+ * Deletes a license by its RUT.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>}
+ */
+async function deleteLicenciaByRut(req, res) {
   try {
-    const licencia = await Licencia.findOne({ rut: req.params.rut });
-    res.json(licencia);
+    const { params } = req;
+    const { error: paramsError } = licenciaIdSchema.validate(params);
+    if (paramsError) return respondError(req, res, 400, paramsError.message);
+    const [licencia, errorLicencia] = await LicenciasServices.deleteLicenciaByRut(params.rut);
+    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
+    respondSuccess(req, res, 200, licencia);
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener la licencia." });
+    handleError(error, "licencia.controller -> deleteLicenciaByRut");
+    respondError(req, res, 400, error.message);
   }
-}; 
+};
+
+module.exports = {
+  createLicencia,
+  getLicencias,
+  getLicenciaByRut,
+  updateLicenciaByRut,
+  deleteLicenciaByRut,
+};
+
