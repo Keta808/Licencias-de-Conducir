@@ -10,13 +10,10 @@ const { handleError } = require("../utils/errorHandler");
  * @param {Object} req - Objeto de petición
  * @param {Object} res - Objeto de respuesta
  */
-
 async function getHoras(req,res){
-
     try {
         const [horas, errorHoras] = await HoraService.getHoras();
         if (errorHoras) return respondError(req, res, 404, errorHoras);
-
         horas.length === 0
         ? respondSuccess(req, res, 204)
         : respondSuccess(req, res, 200, horas);

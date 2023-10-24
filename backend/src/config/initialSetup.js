@@ -19,13 +19,31 @@ async function createRoles() {
     await Promise.all([
       new Role({ name: "user" }).save(),
       new Role({ name: "admin" }).save(),
+      
     ]);
     console.log("* => Roles creados exitosamente");
   } catch (error) {
     console.error(error);
   }
 }
+/** 
+ *Creacion de rol de funcionario 
+ * 
+*/
+async function createFuncionario() {
 
+  try {
+    const count = await Role.estimatedDocumentCount();
+    if (count > 0 ) return;
+
+    await Promise.all([
+      new Role({ name: "funcionario" }).save(),
+    ]);
+    console.log("* => Roles creados exitosamente");
+  } catch (error) {
+    console.error(error);
+  }
+}
 /**
  * Crea los usuarios por defecto en la base de datos.
  * @async
@@ -61,6 +79,7 @@ async function createUsers() {
 }
 
 module.exports = {
+  createFuncionario,
   createRoles,
-  createUsers,
+  createUsers
 };

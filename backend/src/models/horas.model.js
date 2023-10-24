@@ -88,21 +88,21 @@ const fechaSchema = new mongoose.Schema({
 const horaSchema = new mongoose.Schema({
     rut: {
         type: String,
-        default: null
+        default: null,
     },
     fecha: {
         required: true,
-        type: fechaSchema
+        type: fechaSchema,
     },
     disponibilidad: {
         required: true,
         type: Boolean,
-        default: true
+        default: true,
     },
     tipo: {
         required: true,
         type: String,
-    }
+    },
 });
 
 const Hora = mongoose.model("Hora", horaSchema);

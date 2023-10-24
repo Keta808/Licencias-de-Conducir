@@ -1,16 +1,15 @@
 "use strict";
 
 const express = require("express");
-
 const authorizationMiddleware = require("../middlewares/authorization.middleware.js");
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
-
 const horaController = require("../controllers/hora.controller.js");
 
 const router = express.Router();   
 
 router.use(authenticationMiddleware);
 
+<<<<<<< HEAD
 
 // define las rutas para las horas
 router.get("/", authorizationMiddleware.isAdmin, horaController.getHoras);
@@ -19,11 +18,33 @@ router.post("/", authorizationMiddleware.isAdmin, horaController.createHora);
 router.get("/:id", authorizationMiddleware.isAdmin, horaController.getHoraById);
 router.put("/:id",
 authorizationMiddleware.isAdmin, 
+=======
+// Define the routes for the hours
+router.get("/", authorizationMiddleware.isAdmin, 
+    authorizationMiddleware.isFuncionario, horaController.getHoras);
+router.get("/disponibles", horaController.getHorasDisponibles);
+router.post("/", authorizationMiddleware.isAdmin, 
+    authorizationMiddleware.isFuncionario, horaController.createHora);
+router.get("/:id", authorizationMiddleware.isAdmin,
+    authorizationMiddleware.isFuncionario, horaController.getHoraById);
+router.put("/:id",
+authorizationMiddleware.isAdmin,
+authorizationMiddleware.isFuncionario,
+>>>>>>> d6c8d1a5ffa0bda49eefc9503c1f54354ff9949c
 horaController.updateHora,
 );
 router.delete("/:id",
 authorizationMiddleware.isAdmin,
+<<<<<<< HEAD
+=======
+authorizationMiddleware.isFuncionario,
+>>>>>>> d6c8d1a5ffa0bda49eefc9503c1f54354ff9949c
 horaController.deleteHora,
 );
 
 module.exports = router;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> d6c8d1a5ffa0bda49eefc9503c1f54354ff9949c

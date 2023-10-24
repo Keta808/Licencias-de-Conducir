@@ -16,7 +16,7 @@ async function isAdmin(req, res, next) {
     const user = await User.findOne({ email: req.email });
     const roles = await Role.find({ _id: { $in: user.roles } });
     for (let i = 0; i < roles.length; i++) {
-      if (roles[i].name === "admin") {
+      if (roles[i].name === "admin" ) {
         next();
         return;
       }
@@ -32,7 +32,42 @@ async function isAdmin(req, res, next) {
   }
 }
 
+/**
+ * 
+ * Comprueba si el usuario es funcionario
+ * 
+ */
+
+/**
+ * Comprueba si el usuario es funcionario o administrador
+ * @param {Object} req - Objeto de petición
+ * @param {Object} res - Objeto de respuesta
+ * @param {Function} next - Función para continuar con la siguiente función
+ */
+async function isFuncionario(req, res, next) {
+  try {
+    const user = await User.findOne({ email: req.email });
+    const roles = await Role.find({ _id: { $in: user.roles } });
+    for (let i = 0; i < roles.length; i++) {
+      if (roles[i].name === "funcionario" || roles[i].name === "admin") {
+        next();
+        return;
+      }
+    }
+    return respondError(
+      req,
+      res,
+      401,
+      "Se requiere un rol de funcionario para realizar esta acción",
+    );
+  } catch (error) {
+    handleError(error, "authorization.middleware -> isFuncionario");
+  }
+} 
+
+
 module.exports = {
+  isFuncionario,
   isAdmin,
 };
 

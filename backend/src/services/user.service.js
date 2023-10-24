@@ -29,7 +29,7 @@ async function getUsers() {
  */
 async function createUser(user) {
   try {
-    const { username, email, password, roles } = user;
+    const { nombre, rut, email, password, roles } = user;
 
     const userFound = await User.findOne({ email: user.email });
     if (userFound) return [null, "El usuario ya existe"];
@@ -39,7 +39,8 @@ async function createUser(user) {
     const myRole = rolesFound.map((role) => role._id);
 
     const newUser = new User({
-      username,
+      nombre,
+      rut,
       email,
       password: await User.encryptPassword(password),
       roles: myRole,

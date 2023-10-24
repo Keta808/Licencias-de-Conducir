@@ -31,8 +31,8 @@ router.use("/auth", authRoutes);
 
 
 // Define rutas opara las licencias 
-// router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
-// router.use("/licencias", licenciasRoutes); 
+ router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
+  
 
 router.use("/postulacion", postulacionRoutes);
 
