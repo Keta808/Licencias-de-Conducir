@@ -11,10 +11,15 @@ const router = express.Router();
 router.use(authenticationMiddleware);
 
 
-router.get("/", authorizationMiddleware.isf,postulacionController.getPostulaciones);
-router.post("/", postulacionController.createPostulaciones);
-router.get("/:id", postulacionController.getPostulacionById);
-router.delete("/:id", postulacionController.deletePostulacionById);
-router.put("/:id", postulacionController.updatePostulacionById);
+router.get("/", authorizationMiddleware.isFuncionario, authorizationMiddleware.isAdmin,
+postulacionController.getPostulaciones);
+router.post("/",
+ postulacionController.createPostulaciones);
+router.get("/:id", authorizationMiddleware.isFuncionario, authorizationMiddleware.isAdmin, 
+postulacionController.getPostulacionById);
+router.delete("/:id",  
+postulacionController.deletePostulacionById);
+router.put("/:id", authorizationMiddleware.isFuncionario, authorizationMiddleware.isAdmin, 
+postulacionController.updatePostulacionById);
 
 module.exports = router;
