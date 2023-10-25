@@ -146,9 +146,25 @@ async function getHorasDisponibles(req,res){
     }
 }
 
+/**
+ * funcion para actualizar la disponibilidad de una hora mediante el rut de un usuario en sesion
+ */
 
+async function elegirHora(req,res){
+    try {
+       
+        const { id } = req.params;
+        const { rut } = req.body;
 
-
+        const [hora, errorHora] = await HoraService.elegirHora(id, rut);
+        
+        if (errorHora) return respondError(req, res, 404, errorHora);
+        respondSuccess(req, res, 200, hora);
+    } catch (error) {
+        handleError(error, "hora.controller -> elegirHora");
+        respondError(req, res, 400, error.message);
+    }
+}
 
 /**
  * Exporta funciones para ser utilizadas en routes/hora.routes.js
@@ -159,5 +175,6 @@ module.exports = {
     getHoraById,
     updateHora,
     getHorasDisponibles,
+    elegirHora,
     deleteHora
 };
