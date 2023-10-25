@@ -1,3 +1,5 @@
+/* eslint-disable space-before-blocks */
+/* eslint-disable require-jsdoc */
 "use strict";
 
 const Hora = require("../models/horas.model.js");

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 "use strict"; 
 
 const express = require("express");
@@ -18,7 +19,7 @@ const router = express.Router();
 router.use(authenticationMiddleware); 
 
 // Define las rutas para los usuarios /api/usuarios 
-router.post("/AgregarLicencia", LicenciasController.createLicencia); // Crea una nueva licencia 
+router.post("/AgregarLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, LicenciasController.createLicencia); // Crea una nueva licencia 
 router.get("/Licencias", LicenciasController.getLicencia); // Obtiene todas las licencias 
 router.get("/Buscar-Licencia/:numeroLicencia", LicenciasController.getLicenciaById);
 router.get("/Buscar-Licencia/:rut", LicenciasController.getLicenciaByRut); 
@@ -26,15 +27,16 @@ router.get("/Buscar-Licencia/:rut", LicenciasController.getLicenciaByRut);
 // router.post("/Enviar-Licencia/:numeroLicencia", LicenciasController.sendLicenciaById);
 
 
-router.put("/Actualizar/:numeroLicencia", authorizationMiddleware.isFuncionario, 
-           updateLicenciaById); // Actualiza una licencia por su id de licencia
-router.delete("/Eliminar/:numeroLicencia", authorizationMiddleware.isFuncionario, 
-              deleteLicenciaById); // Elimina una licencia por su id de licencia
-router.put("/ActualizaPorRut/:rut", authorizationMiddleware.isFuncionario, 
+// router.put("/Actualizar/:numeroLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
+          // updateLicenciaById); // Actualiza una licencia por su id de licencia
+// router.delete("/Eliminar/:numeroLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
+  //            deleteLicenciaById); // Elimina una licencia por su id de licencia 
+
+router.put("/ActualizaPorRut/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
            LicenciasController.updateLicenciaByRut); // Actualiza una licencia por su rut
 module.exports = router;  
 
-router.delete("/EliminarPorRut/:numeroLicencia", authorizationMiddleware.isFuncionario, 
+router.delete("/EliminarPorRut/:numeroLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
               deleteLicenciaByRut); 
 
 module.exports = router; 

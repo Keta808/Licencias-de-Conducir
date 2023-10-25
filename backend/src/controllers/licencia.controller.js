@@ -1,3 +1,4 @@
+"use strict";  
 
 const LicenciasServices = require("../services/licencia.service.js");
 const { respondSuccess, respondError } = require("../utils/resHandler");

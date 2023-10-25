@@ -7,7 +7,7 @@ const resultadoExamenSchema = mongoose.Schema({
         unique: true, // Cada RUT en las licencias debe ser único
         require: true,
       },  
-      IdResExamen: { type: String, unique: true },
+      fechaDocumento: { type: Date },
       pdfDocumento: {
         data: Buffer, // Almacena el contenido del PDF
         contentType: String, // Tipo de contenido del archivo (por ejemplo, 'application/pdf')
