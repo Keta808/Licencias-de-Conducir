@@ -3,12 +3,10 @@
 const { Schema, model } = require("mongoose");
 
 const ValidacionPosSchema = Schema({
-    postulacion: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Postulacion",
-        },
-    ],
+    rut: {
+        type: String, // hay que hacer que se vincule con el rut de la persona que postulo
+        required: true,
+    },
     estado: {
         type: Boolean, // true=aprobado, false=rechazado
         required: true,
