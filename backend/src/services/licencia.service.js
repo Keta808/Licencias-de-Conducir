@@ -77,7 +77,7 @@ async function updateLicenciaByRut(rut, licencia) {
     if (!licenciaFound) return [null, "La licencia no existe"];
 
     const updatedLicencia = await Licencia.findByIdAndUpdate(
-      licenciaFound._id,
+      rut,
       {
         TipoLicencia: req.body.TipoLicencia || TipoLicencia,
         FechaRetiro: req.body.FechaRetiro || FechaRetiro,

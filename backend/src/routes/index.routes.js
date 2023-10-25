@@ -32,8 +32,10 @@ router.use("/auth", authRoutes);
 
 // Define rutas opara las licencias 
  router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
-  
+// Define rutas para los resultados de examen 
+router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
 
+// Define rutas para las postulaciones
 router.use("/postulacion", postulacionRoutes);
 
 // Exporta el enrutador
