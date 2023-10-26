@@ -1,9 +1,15 @@
+/* eslint-disable padded-blocks */
 /* eslint-disable require-jsdoc */
 const Licencia = require("../models/licencia.model.js"); // Importa el modelo de licencia
-const { handleError } = require("../utils/errorHandler");
+const { handleError } = require("../utils/errorHandler"); 
 const User = require("../models/user.model.js");
 const nodemailer = require("nodemailer"); 
-require("dotenv").config();
+require("dotenv").config(); 
+
+const multer = require("multer");
+const storage = multer.memoryStorage(); // Almacena el archivo en memoria
+const upload = multer({ storage: storage }); 
+exports.upload = upload.single("pdfDocumento");
 /**
  * Creates a new license and a corresponding application if it doesn't exist.
  * @param {Object} licenciaData - The data for the new license.
@@ -11,22 +17,17 @@ require("dotenv").config();
  */
 async function createLicencia(licenciaData) {
   try {
-    const { rut, TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = licenciaData;
+    const { rut, TipoLicencia, FechaRetiro, EstadoLicencia } = licenciaData;
 
-    const LicenciaFound = await Licencia.findOne({ rut: rut });
+    const LicenciaFound = await Licencia.findOne({ rut: licenciaData.rut });
     if (LicenciaFound) return [null, "La Licencia ya existe"];
-    
-    const usuarioExistente = await User.findOne({ rut });
-    if (!usuarioExistente) {
-      return [null, "El usuario con este RUT no existe"];
-    }
+
 
     const newLicencia = new Licencia({
       rut,
       TipoLicencia,
       FechaRetiro,
       EstadoLicencia, 
-      pdfDocumento,
   });
     await newLicencia.save();
     return [newLicencia, null];
@@ -34,6 +35,36 @@ async function createLicencia(licenciaData) {
     handleError(error, "licencia.service -> createLicencia");
   }
 }; 
+
+// Crear licencia por rut 
+async function createLicenciaPorRut(rut, licenciaData) {
+  try {
+    const { TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = licenciaData;
+
+    // Asegúrate de que el RUT sea válido y no esté duplicado
+
+    const LicenciaFound = await Licencia.findOne({ rut: rut });
+    if (LicenciaFound) {
+      return [null, "La Licencia ya existe"];
+    }
+
+    const newLicencia = new Licencia({
+      rut,
+      TipoLicencia,
+      FechaRetiro,
+      EstadoLicencia,
+      pdfDocumento: {
+        data: pdfDocumento,
+        contentType: "application/pdf", // Tipo de contenido para archivos PDF
+      },
+    });
+
+    await newLicencia.save();
+    return [newLicencia, null];
+  } catch (error) {
+    handleError(error, "licencia.service -> createLicenciaPorRut");
+  }
+}
 
 
 /**
@@ -231,6 +262,7 @@ module.exports = {
   updateLicenciaByRut,
   deleteLicenciaByRut, 
   enviarLicenciaPorCorreo, 
-  enviarLicenciaPorRUT,
+  enviarLicenciaPorRUT, 
+  createLicenciaPorRut,
 };
 

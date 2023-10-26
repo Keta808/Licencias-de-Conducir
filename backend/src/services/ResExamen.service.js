@@ -1,3 +1,4 @@
+/* eslint-disable padded-blocks */
 /* eslint-disable require-jsdoc */
 "use strict";
 
@@ -24,13 +25,35 @@ async function createResExamen(ResExamenData) {
         const newResExamen = new ResExamen({
             rut,
             fechaDocumento,
-            pdfDocumento: pdfDocumento,
+            pdfDocumento,
         }); 
         await newResExamen.save();
         return [newResExamen, null];
     } catch (error) {
         handleError(error, "ResExamen.service -> createResExamen");
     }
+};
+
+async function createResExamenPorRut(rut, ResExamenData) {
+ try { 
+   const { fechaDocumento, pdfDocumento } = ResExamenData; 
+   const ResExamenFound = await ResExamen.findOne({ rut: rut }); 
+   if (ResExamenFound) return [null, "El resultado de examen ya existe"]; 
+    const newResExamen = new ResExamen({
+        rut,
+        fechaDocumento,
+        pdfDocumento: {
+            data: pdfDocumento,
+            contentType: "application/pdf", // Tipo de contenido para archivos PDF
+        },
+    });
+    await newResExamen.save(); 
+    return [newResExamen, null];
+
+ } catch (error) {
+    handleError(error, "ResExamen.service -> createResExamenPorRut");
+  }
+
 };
 
 /**
@@ -223,6 +246,7 @@ module.exports = {
     updateResExamenByRut, 
     deleteResExamenByRut, 
     enviarResExamenPorCorreo,
-    enviarExamenPorRUT,
+    enviarExamenPorRUT, 
+    createResExamenPorRut, 
 };
 
