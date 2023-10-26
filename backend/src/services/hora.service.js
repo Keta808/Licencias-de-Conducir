@@ -149,8 +149,40 @@ async function getHorasDisponibles() {
 }
 
 
+/**
+ * Funcion para asignar una hora a un usuario mediante el rut de la sesion
+ */
+
+async function elegirHora(id, rut){
+    try {
+
+        const horaFound = await Hora.findById(id);
+        if (!horaFound) return [null, "La hora no existe"];
+        if(horaFound.rut != null) return [null, "La hora ya esta asignada a un usuario" ];
+        if(horaFound.disponibilidad == false) return [null, "La hora no esta disponible"];
+        
+
+    await Hora.findByIdAndUpdate(id, { rut: rut ,disponibilidad: false}, {new: true}).exec();
+  
+    const horaUpdated={
+        id:horaFound._id,
+        rut:rut,
+        fecha:horaFound.fecha,
+        disponibilidad:false,
+        tipo:horaFound.tipo
+
+    }
+    
+    return [horaUpdated, null];
+    } catch (error) {
+        handleError(error, "hora.service -> elegirHora");
+    }
+}
 
 
+/**
+* Exporta las funciones del servicio 
+*/
 
 module.exports = {
     getHoras,
@@ -158,6 +190,7 @@ module.exports = {
     getHorabyId,
     updateHora,
     getHorasDisponibles,
+    elegirHora,
     deleteHora
 };
 

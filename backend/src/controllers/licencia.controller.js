@@ -1,3 +1,4 @@
+/* eslint-disable require-jsdoc */
 "use strict";  
 
 const LicenciasServices = require("../services/licencia.service.js");
@@ -114,11 +115,41 @@ async function deleteLicenciaByRut(req, res) {
   }
 };
 
+async function enviarLicenciaPorCorreo(req, res) {
+  try {
+    const { params } = req;
+    const { error: paramsError } = licenciaIdSchema.validate(params);
+    if (paramsError) return respondError(req, res, 400, paramsError.message);
+    const [licencia, errorLicencia] = await LicenciasServices.enviarLicenciaPorCorreo(params.rut);
+    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
+    respondSuccess(req, res, 200, licencia);
+  } catch (error) {
+    handleError(error, "licencia.controller -> enviarLicenciaPorCorreo");
+    respondError(req, res, 400, error.message);
+  }
+};
+
+async function enviarLicenciaPorRUT(req, res) { 
+ try {
+    const { params } = req;
+    const { error: paramsError } = licenciaIdSchema.validate(params);
+    if (paramsError) return respondError(req, res, 400, paramsError.message);
+    const [licencia, errorLicencia] = await LicenciasServices.enviarLicenciaPorRUT(params.rut);
+    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
+    respondSuccess(req, res, 200, licencia); 
+ } catch (error) {
+   handleError(error, "licencia.controller -> enviarLicenciaPorRUT");
+   respondError(req, res, 400, error.message);
+ }
+};
+
 module.exports = {
   createLicencia,
   getLicencias,
   getLicenciaByRut,
   updateLicenciaByRut,
-  deleteLicenciaByRut,
+  deleteLicenciaByRut, 
+  enviarLicenciaPorCorreo, 
+  enviarLicenciaPorRUT,
 };
 
