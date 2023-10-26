@@ -13,7 +13,7 @@ async function getHoras() {
     try {
         const horas = await Hora.find() .exec();
 
-        if(!horas) return [null, "No hay horas disponibles"];
+        if (!horas) return [null, "No hay horas disponibles"];
         
         return [horas, null];
     } catch (error) {

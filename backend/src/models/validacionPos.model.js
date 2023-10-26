@@ -1,8 +1,9 @@
 "use strict";
+const mongoose = require("mongoose");
 
-const { Schema, model } = require("mongoose");
+// const { Schema, model } = require("mongoose");
 
-const ValidacionPosSchema = Schema({
+const ValidacionPosSchema = new mongoose.Schema({
     rut: {
         type: String, // hay que hacer que se vincule con el rut de la persona que postulo
         required: true,
@@ -13,5 +14,6 @@ const ValidacionPosSchema = Schema({
     },
 });
 
-const ValidacionPos = model("ValidacionPos", ValidacionPosSchema);
-exports.ValidacionPos = ValidacionPos;
+const ValidacionPos = mongoose.model("ValidacionPos", ValidacionPosSchema);
+// exports.ValidacionPos = ValidacionPos;
+module.exports = ValidacionPos;

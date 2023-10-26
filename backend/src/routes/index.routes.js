@@ -37,11 +37,14 @@ router.use("/licencias", authenticationMiddleware, licenciasRoutes);
 // Define rutas para los resultados de examen 
 router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
 
-// router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
 
 
 // Define rutas para las postulaciones
 router.use("/postulacion", postulacionRoutes);
+// router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
+
+// Define rutas para los uploads
+// router.use("/upload", uploadRoutes);
 
 // Exporta el enrutador
 module.exports = router;

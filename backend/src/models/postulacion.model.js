@@ -1,7 +1,7 @@
 "use strict";
 
 const { Schema, model } = require("mongoose");
-// FALTA AGREGAR QUE TRAMITE DESEA REALIZAR
+
 const PostulacionSchema = Schema({
     nombre: {
         type: String,
