@@ -41,19 +41,7 @@ function validarDia(dia) {
  * @param {*} año 
  * @returns 
  */
-function validarFebrero(valor, mes, año) {
-    // Si el mes es febrero y el día es mayor que 28 (o 29 en años bisiestos), retorna falso.
-    if (mes === 2) {
-      if ((año % 4 === 0 && año % 100 !== 0) || año % 400 === 0) {
-        // Es un año bisiesto, se permiten 29 días.
-        return valor <= 29;
-      } else {
-        // No es un año bisiesto, se permiten 28 días.
-        return valor <= 28;
-      }
-    }
-    return true; // Otros meses no tienen restricciones
-  }
+
 
 /**
  * 
@@ -61,7 +49,7 @@ function validarFebrero(valor, mes, año) {
  * @returns 
  */
 function validarHora(hora) {
-    return hora >= 0 && hora <= 23;
+    return hora >= 0 && hora <= 15;
 }
 
 /**
