@@ -9,6 +9,7 @@ const userRoutes = require("./user.routes.js");
 const authRoutes = require("./auth.routes.js");
 
 const postulacionRoutes = require("./postulacion.routes.js");
+const validacionPosRoutes = require("./validacionPos.routes.js"); 
 
 /** Middleware de autenticación */
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
@@ -32,15 +33,19 @@ router.use("/auth", authRoutes);
 
 // Define rutas opara las licencias 
 
- router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
+// router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
 // Define rutas para los resultados de examen 
-router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
+// router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
 
 // router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
 
 
 // Define rutas para las postulaciones
 router.use("/postulacion", postulacionRoutes);
+router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
+
+// Define rutas para los uploads
+// router.use("/upload", uploadRoutes);
 
 // Exporta el enrutador
 module.exports = router;
