@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable require-jsdoc */
 "use strict"; 
 
 const ResExamenServices = require("../services/ResExamen.service.js"); 
@@ -118,10 +120,25 @@ async function deleteResExamenByRut(req, res) {
     };
 };
 
+async function enviarResExamenPorCorreo(req, res) { 
+    try { 
+        const { params } = req; 
+        const { error: paramsError } = resExamenIdSchema.validate(params); 
+        if (paramsError) return respondError(req, res, 400, paramsError.message);
+        const [resExamen, errorResExamen] = await ResExamenServices.enviarResExamenPorCorreo(params.rut); 
+        if (errorResExamen) return respondError(req, res, 404, errorResExamen); 
+        respondSuccess(req, res, 200, resExamen);
+    } catch (error) {
+        handleError(error, "resultadoExamen.controller -> enviarResExamenPorCorreo");
+        respondError(req, res, 400, error.message);
+    };
+};
+
 module.exports = {
     createResExamen,
     getResExamenes,
     getResExamenByRut,
     updateResExamenByRut,
     deleteResExamenByRut,
+    enviarResExamenPorCorreo,
 };

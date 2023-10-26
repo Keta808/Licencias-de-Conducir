@@ -9,7 +9,7 @@ const licenciaSchema = mongoose.Schema({
       },
     TipoLicencia: { type: String, unique: true },
     FechaRetiro: { type: Date },
-    EstadoLicencia: { type: String, enum: ["Activa", "Retirada", "En Tramite"] },
+    EstadoLicencia: { type: String, enum: ["Retirada", "En Tramite"] },
     pdfDocumento: {
         data: Buffer, // Almacena el contenido del PDF
         contentType: String, // Tipo de contenido del archivo (por ejemplo, 'application/pdf')

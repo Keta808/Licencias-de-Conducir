@@ -16,7 +16,11 @@ const authenticationMiddleware = require("../middlewares/authentication.middlewa
 const router = express.Router();
 
 // Define el middleware de autenticación para todas las rutas
-router.use(authenticationMiddleware); 
+router.use(authenticationMiddleware);  
+
+const multer = require("multer");
+const storage = multer.memoryStorage(); // Almacena el archivo en memoria
+const upload = multer({ storage: storage });
 
 // Define las rutas para los usuarios /api/usuarios 
 router.post("/AgregarLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, LicenciasController.createLicencia); // Crea una nueva licencia 
@@ -36,7 +40,42 @@ router.put("/ActualizaPorRut/:rut", authorizationMiddleware.isAdmin, authorizati
            LicenciasController.updateLicenciaByRut); // Actualiza una licencia por su rut
 module.exports = router;  
 
-router.delete("/EliminarPorRut/:numeroLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
+router.delete("/EliminarPorRut/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
               deleteLicenciaByRut); 
+
+router.post("/Enviar-Licencia/", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, LicenciasController.enviarLicenciaPorCorreo);    
+router.post("/Enviar-Licencia-RUT/", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, LicenciasController.enviarLicenciaPorCorreo);    
+
+router.post("/crearLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, upload.single("pdfDocumento"), async (req, res) => {
+  try {
+    // Extraer otros datos del cuerpo de la solicitud
+    const { rut, TipoLicencia, FechaRetiro, EstadoLicencia } = req.body;
+    
+    const pdfDocumento = req.file.buffer;
+
+    const licenciaData = {
+      rut,
+      TipoLicencia,
+      FechaRetiro,
+      EstadoLicencia,
+      pdfDocumento,
+    };
+
+    const [newLicencia, errorLicencia] = await LicenciasServices.createLicencia(licenciaData);
+
+    if (errorLicencia) {
+      return respondError(req, res, 400, errorLicencia);
+    }
+
+    if (!newLicencia) {
+      return respondError(req, res, 400, "No se creó la licencia");
+    }
+
+    respondSuccess(req, res, 201, newLicencia);
+  } catch (error) {
+    handleError(error, "licencia.controller -> createLicencia");
+    respondError(req, res, 500, "No se creó la licencia");
+  }
+});
 
 module.exports = router; 
