@@ -132,7 +132,21 @@ async function enviarResExamenPorCorreo(req, res) {
         handleError(error, "resultadoExamen.controller -> enviarResExamenPorCorreo");
         respondError(req, res, 400, error.message);
     };
-};
+}; 
+
+async function enviarExamenPorRUT(req, res) { 
+    try { 
+        const { params } = req; 
+        const { error: paramsError } = resExamenIdSchema.validate(params); 
+        if (paramsError) return respondError(req, res, 400, paramsError.message);
+        const [resExamen, errorResExamen] = await ResExamenServices.enviarExamenPorRUT(params.rut); 
+        if (errorResExamen) return respondError(req, res, 404, errorResExamen); 
+        respondSuccess(req, res, 200, resExamen);
+    } catch (error) {
+        handleError(error, "resultadoExamen.controller -> enviarExamenPorRUT");
+        respondError(req, res, 400, error.message);
+    };
+}
 
 module.exports = {
     createResExamen,
@@ -140,5 +154,6 @@ module.exports = {
     getResExamenByRut,
     updateResExamenByRut,
     deleteResExamenByRut,
-    enviarResExamenPorCorreo,
+    enviarResExamenPorCorreo, 
+    enviarExamenPorRUT,
 };

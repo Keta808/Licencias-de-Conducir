@@ -126,9 +126,7 @@ async function deleteLicenciaByRut(rut) {
     handleError(error, "licencia.service -> deleteLicenciaByRut");
   }
 };
-
-// Funcion enviar licencia a usuario. 
-
+ 
 
 // Función para enviar una licencia por correo electrónico
 async function enviarLicenciaPorCorreo(rut, pdfDocumento) {

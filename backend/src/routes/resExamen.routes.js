@@ -25,7 +25,8 @@ router.post("/AgregarResExamen", authorizationMiddleware.isAdmin, authorizationM
 router.get("/ResExamenes", ResExamenController.getResExamen); // Obtiene todos los resultados de examen 
 router.get("/Buscar-ResExamen/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.getResExamenByRut); // Obtiene un resultado de examen por su id de resultado de examen 
 router.put("/Actualizar/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.updateResExamenByRut); 
-router.delete("/Eliminar/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.deleteResExamenByRut);
+router.delete("/Eliminar/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.deleteResExamenByRut); 
+router.post("/Enviar-ResExamen/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.enviarExamenPorRUT);
 
 // authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
 router.post("/resultados-examen", authorizationMiddleware.isAdmin, upload.single("pdfDocumento"), async (req, res) => {
