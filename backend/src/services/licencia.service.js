@@ -1,15 +1,24 @@
+/* eslint-disable no-console */
 /* eslint-disable padded-blocks */
 /* eslint-disable require-jsdoc */
 const Licencia = require("../models/licencia.model.js"); // Importa el modelo de licencia
 const { handleError } = require("../utils/errorHandler"); 
 const User = require("../models/user.model.js");
-const nodemailer = require("nodemailer"); 
+ 
+
 require("dotenv").config(); 
+
+const sgMail = require("@sendgrid/mail");  
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const multer = require("multer");
 const storage = multer.memoryStorage(); // Almacena el archivo en memoria
 const upload = multer({ storage: storage }); 
-exports.upload = upload.single("pdfDocumento");
+exports.upload = upload.single("pdfDocumento"); 
+ 
+
+const emailUser = process.env.EMAIL_USER;
+
 /**
  * Creates a new license and a corresponding application if it doesn't exist.
  * @param {Object} licenciaData - The data for the new license.
@@ -159,99 +168,52 @@ async function deleteLicenciaByRut(rut) {
 };
  
 
-// Función para enviar una licencia por correo electrónico
-async function enviarLicenciaPorCorreo(rut, pdfDocumento) {
-  try {
-    // 1. Buscar la persona por RUT
-    const persona = await User.findOne({ rut });
-
-    if (!persona) {
-      return [null, "No se encontró una persona con este RUT"];
-    }
-
-    // 2. Verificar que la persona tenga una dirección de correo electrónico
-    if (!persona.email) {
-      return [null, "La persona no tiene una dirección de correo electrónico registrada"];
-    }
-
-    // 3. Configurar el transporte de correo (usando las credenciales centralizadas o de la aplicación)
-    const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE, // Cargar desde variables de entorno
-      auth: {
-        user: process.env.EMAIL_USER, // Cargar desde variables de entorno
-        pass: process.env.EMAIL_PASSWORD, // Cargar desde variables de entorno
-      },
-    });
-
-    // 4. Preparar el correo
-    const mailOptions = {
-      from: process.env.EMAIL_USER, // Correo de la aplicación
-      to: persona.email, // Correo de la persona
-      subject: "Tu Licencia de Conducir",
-      text: "Aquí está tu licencia adjunta:",
-      attachments: [
-        {
-          filename: "Licencia.pdf",
-          content: pdfDocumento, // Contenido del archivo PDF de la licencia
-        },
-      ],
-    };
-
-    // 5. Enviar el correo
-    await transporter.sendMail(mailOptions);
-
-    return [persona, null];
-  } catch (error) {
-    handleError(error, "licencia.service -> enviarLicenciaPorCorreo");
-  }
-}; 
+// Función para enviar una licencia por correo electrónico 
 
 async function enviarLicenciaPorRUT(rut) {
   try {
     // 1. Buscar la persona por RUT
-    const persona = await User.findOne({ rut });
-
+    const persona = await User.findOne({ rut }); 
+    const email = persona.email;  
+    
     if (!persona) {
       return [null, "No se encontró una persona con este RUT"];
     }
-
+    
     // 2. Verificar que la persona tenga una dirección de correo electrónico
     if (!persona.email) {
       return [null, "La persona no tiene una dirección de correo electrónico registrada"];
-    }
+    } 
+    
 
     // 3. Obtener el PDF de la licencia desde la base de datos (debes implementar esta parte)
-    const pdfDocumento = await getLicenciaByRut(rut);
+    const pdfDocumento = getLicenciaByRut(rut);  
 
-    // 4. Configurar el transporte de correo (usando las credenciales centralizadas o de la aplicación)
-    const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE, // Cargar desde variables de entorno
-      auth: {
-        user: process.env.EMAIL_USER, // Cargar desde variables de entorno
-        pass: process.env.EMAIL_PASSWORD, // Cargar desde variables de entorno
-      },
-    });
-
-    // 5. Preparar el correo
-    const mailOptions = {
-      from: process.env.EMAIL_USER, // Correo de la aplicación
-      to: persona.email, // Correo de la persona
-      subject: "Tu Licencia de Conducir",
-      text: "Aquí está tu licencia adjunta:",
+    const subject = "Tu Licencia de Conducir";
+    const text = "Aquí está tu licencia adjunta."; 
+    // 5. Enviar el correo
+    const msg = {
+      to: email,
+      from: emailUser, // Tu dirección de correo
+      subject,
+      text,
       attachments: [
         {
+          content: pdfDocumento.toString("base64"), // Contenido del archivo PDF de la licencia
           filename: "Licencia.pdf",
-          content: pdfDocumento, // Contenido del archivo PDF de la licencia
+          type: "application/pdf",
+          disposition: "attachment",
         },
       ],
     };
 
-    // 6. Enviar el correo
-    await transporter.sendMail(mailOptions);
+    await sgMail.send(msg);
 
     return [persona, null];
+    
+    
   } catch (error) {
-    handleError(error, "licencia.service -> enviarLicenciaPorCorreo");
+    handleError(error, "licencia.service -> enviarLicenciaPorRUT");
   }
 }
 
@@ -260,8 +222,7 @@ module.exports = {
   getLicencias,
   getLicenciaByRut,
   updateLicenciaByRut,
-  deleteLicenciaByRut, 
-  enviarLicenciaPorCorreo, 
+  deleteLicenciaByRut,  
   enviarLicenciaPorRUT, 
   createLicenciaPorRut,
 };

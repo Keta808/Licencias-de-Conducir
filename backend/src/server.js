@@ -1,5 +1,6 @@
 // Importa el archivo 'configEnv.js' para cargar las variables de entorno
-const { PORT, HOST } = require("./config/configEnv.js");
+const { PORT, HOST } = require("./config/configEnv.js"); 
+require("dotenv").config();
 // Importa el módulo 'cors' para agregar los cors
 const cors = require("cors");
 // Importa el módulo 'express' para crear la aplicacion web
@@ -14,7 +15,7 @@ const indexRoutes = require("./routes/index.routes.js");
 const { setupDB } = require("./config/configDB.js");
 // Importa el handler de errores
 const { handleFatalError, handleError } = require("./utils/errorHandler.js");
-const { createRoles, createUsers, createFuncionario } = require("./config/initialSetup");
+const { createRoles, createUsers, createFuncionario } = require("./config/initialSetup"); 
 
 /**
  * Inicia el servidor web
@@ -60,7 +61,6 @@ async function setupAPI() {
     await createUsers();
     // Crea rol funcionario
     await createFuncionario();
-    
   } catch (err) {
     handleFatalError(err, "/server.js -> setupAPI");
   }

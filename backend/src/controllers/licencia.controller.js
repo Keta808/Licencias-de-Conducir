@@ -8,7 +8,8 @@ const LicenciasServices = require("../services/licencia.service.js");
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
 const { licenciaBodySchema, licenciaIdSchema } = require("../schema/licencia.schema"); 
-const User = require("../models/user.model.js");
+const User = require("../models/user.model.js"); 
+require("dotenv").config();
 const multer = require("multer");
 const storage = multer.memoryStorage(); // Almacena el archivo en memoria
 const upload = multer({ storage: storage }); 
@@ -123,33 +124,25 @@ async function deleteLicenciaByRut(req, res) {
   }
 };
 
-async function enviarLicenciaPorCorreo(req, res) {
+
+async function enviarLicenciaPorRUT(req, res) {
   try {
     const { params } = req;
-    const { error: paramsError } = licenciaIdSchema.validate(params);
-    if (paramsError) return respondError(req, res, 400, paramsError.message);
-    const [licencia, errorLicencia] = await LicenciasServices.enviarLicenciaPorCorreo(params.rut);
-    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
-    respondSuccess(req, res, 200, licencia);
-  } catch (error) {
-    handleError(error, "licencia.controller -> enviarLicenciaPorCorreo");
-    respondError(req, res, 400, error.message);
-  }
-};
+    const { rut } = params; // Obtener el RUT desde los parámetros de la ruta
 
-async function enviarLicenciaPorRUT(req, res) { 
- try {
-    const { params } = req;
-    const { error: paramsError } = licenciaIdSchema.validate(params);
-    if (paramsError) return respondError(req, res, 400, paramsError.message);
-    const [licencia, errorLicencia] = await LicenciasServices.enviarLicenciaPorRUT(params.rut);
-    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
-    respondSuccess(req, res, 200, licencia); 
- } catch (error) {
-   handleError(error, "licencia.controller -> enviarLicenciaPorRUT");
-   respondError(req, res, 400, error.message);
- }
-}; 
+    // Llama a la función del servicio para enviar la licencia por RUT
+    const [persona, error] = await LicenciasServices.enviarLicenciaPorRUT(rut);
+
+    if (error) {
+      return respondError(req, res, 400, error); // Maneja el error correctamente
+    }
+
+    return respondSuccess(req, res, 200, persona); // Devuelve la respuesta exitosa
+  } catch (error) {
+    handleError(error, "licencia.controller -> enviarLicenciaPorRUT");
+    return respondError(req, res, 500, error.message); // Maneja los errores generales
+  }
+} 
 
 async function createLicenciaPorRut(req, res) {
   try {
@@ -192,7 +185,6 @@ module.exports = {
   getLicenciaByRut,
   updateLicenciaByRut,
   deleteLicenciaByRut, 
-  enviarLicenciaPorCorreo, 
   enviarLicenciaPorRUT, 
   createLicenciaPorRut,
 };

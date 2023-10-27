@@ -1,3 +1,4 @@
+/* eslint-disable no-multiple-empty-lines */
 "use strict";
 // Importa el modulo 'express' para crear las rutas
 const express = require("express");
