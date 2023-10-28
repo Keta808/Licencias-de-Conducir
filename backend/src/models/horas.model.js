@@ -49,7 +49,7 @@ function validarDia(dia) {
  * @returns 
  */
 function validarHora(hora) {
-    return hora >= 0 && hora <= 15;
+    return hora >= 8 && hora <= 15;
 }
 
 /**
@@ -120,7 +120,6 @@ const horaSchema = new mongoose.Schema({
     disponibilidad: {
         required: true,
         type: Boolean,
-        default: true,
     },
     tipo: {
         required: true,

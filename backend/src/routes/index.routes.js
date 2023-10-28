@@ -3,6 +3,8 @@
 // Importa el modulo 'express' para crear las rutas
 const express = require("express");
 
+const validacionPosRoutes = require("./validacionPos.routes.js");
+
 /** Enrutador de usuarios  */
 const userRoutes = require("./user.routes.js");
 
@@ -42,7 +44,7 @@ router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
 
 // Define rutas para las postulaciones
 router.use("/postulacion", postulacionRoutes);
-// router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
+router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
 
 
 // define ruta para subir archivos
