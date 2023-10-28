@@ -49,5 +49,12 @@ router.use("/postulacion", postulacionRoutes);
 // const uploadRoutes = require("./upload.routes.js");
 // router.use("/upload", uploadRoutes);
 
+// Define rutas para subir archivos de las postulaciones
+const uploadFile = require("../middlewares/multer.middlewares.js");
+router.post("/uploadFile", uploadFile(), (req, res) => {
+    console.log(req.file);
+    res.send("Archivo subido correctamente");
+});
+
 // Exporta el enrutador
 module.exports = router;

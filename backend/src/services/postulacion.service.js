@@ -59,7 +59,7 @@ async function getPostulacionById(id) {
 /**
  * Servicio que se conecta con la BD para actualizar una postulacion por su id
  */
-async function updatePostulacion(id, postulacion) {
+async function updatePostulacionById(id, postulacion) {
     try {
         const { nombre, rut, edad, direccion, tramite } = postulacion;
 
@@ -98,6 +98,6 @@ module.exports = {
     getPostulaciones,
     createPostulaciones,
     getPostulacionById,
-    updatePostulacion,
+    updatePostulacionById,
     deletePostulacionById,
 };
