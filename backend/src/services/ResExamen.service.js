@@ -181,7 +181,17 @@ async function enviarExamenPorRUT(rut) {
     
 
     // 3. Obtener el PDF de la licencia desde la base de datos (debes implementar esta parte)
-    const pdfDocumento = getResExamenByRut(rut);  
+    const pdfDocumento = getResExamenByRut(rut); 
+    const { fechaDocumento, estadoExamen } = await ResExamen.findOne({ rut: rut }); 
+    const html = `  
+    <p>Adjunto encontrarás tus resultados de Examen. Aquí están los detalles:</p>
+      <ul>
+        <li>Nombre: ${persona.nombre}</li>
+        <li>RUT: ${persona.rut}</li>
+        <li>Fecha del Documento: ${fechaDocumento}</li> 
+        <li>Estado de Examenes: ${estadoExamen}</li>
+      </ul>
+    `;
 
     const subject = "Resultados de examen de Conducir";
     const text = "Aquí estan tus Resultados de Examenes Adjunto."; 
@@ -191,6 +201,7 @@ async function enviarExamenPorRUT(rut) {
       from: emailUser, // Tu dirección de correo
       subject,
       text,
+      html,
       attachments: [
         {
           content: pdfDocumento.toString("base64"), // Contenido del archivo PDF de la licencia

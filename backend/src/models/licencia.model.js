@@ -8,7 +8,7 @@ const licenciaSchema = mongoose.Schema({
         unique: true, // Cada RUT en las licencias debe ser único
         require: true,
       },
-    TipoLicencia: { type: String },
+    TipoLicencia: { type: String, enum: ["A1", "A2", "A3", "A4", "A5", "B", "C", "D", "E", "F", "G", "H"], default: "B" },
     FechaRetiro: { type: String, default: null },
     EstadoLicencia: { type: String, enum: ["Retirada", "En Tramite", "Retirable"], default: "En Tramite" },
     pdfDocumento: {

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 const mongoose = require("mongoose"); 
 
 const resultadoExamenSchema = mongoose.Schema({
@@ -8,6 +9,7 @@ const resultadoExamenSchema = mongoose.Schema({
         require: true,
       },  
       fechaDocumento: { type: String },
+      estadoExamen: { type: String, enum: ["Aprobado", "Reprobado"], default: "En Espera de Resultados" },
       pdfDocumento: {
         data: Buffer, // Almacena el contenido del PDF
         contentType: String, // Tipo de contenido del archivo (por ejemplo, 'application/pdf')

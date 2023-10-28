@@ -187,7 +187,20 @@ async function enviarLicenciaPorRUT(rut) {
     
 
     // 3. Obtener el PDF de la licencia desde la base de datos (debes implementar esta parte)
-    const pdfDocumento = getLicenciaByRut(rut);  
+    const pdfDocumento = getLicenciaByRut(rut);   
+
+    const { TipoLicencia, FechaRetiro, EstadoLicencia } = await Licencia.findOne({ rut });
+    const html = `
+      <p>Adjunto encontrarás tu licencia de conducir. Aquí están los detalles de tu licencia:</p>
+      <ul>
+        <li>Nombre: ${persona.nombre}</li>
+        <li>RUT: ${persona.rut}</li>
+        <li>Tipo de Licencia: ${TipoLicencia}</li>
+        <li>Fecha de Retiro: ${FechaRetiro || "No asignada"}</li>
+        <li>Estado de la Licencia: ${EstadoLicencia}</li>
+        
+      </ul>
+    `;
 
     const subject = "Tu Licencia de Conducir";
     const text = "Aquí está tu licencia adjunta."; 
@@ -197,6 +210,7 @@ async function enviarLicenciaPorRUT(rut) {
       from: emailUser, // Tu dirección de correo
       subject,
       text,
+      html,
       attachments: [
         {
           content: pdfDocumento.toString("base64"), // Contenido del archivo PDF de la licencia
