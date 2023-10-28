@@ -1,10 +1,19 @@
+/* eslint-disable space-before-blocks */
+/* eslint-disable padded-blocks */
+/* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 "use strict";  
 
 const LicenciasServices = require("../services/licencia.service.js");
 const { respondSuccess, respondError } = require("../utils/resHandler");
 const { handleError } = require("../utils/errorHandler");
-const { licenciaBodySchema, licenciaIdSchema } = require("../schema/licencia.schema");
+const { licenciaBodySchema, licenciaIdSchema } = require("../schema/licencia.schema"); 
+const User = require("../models/user.model.js"); 
+require("dotenv").config();
+const multer = require("multer");
+const storage = multer.memoryStorage(); // Almacena el archivo en memoria
+const upload = multer({ storage: storage }); 
+exports.upload = upload.single("pdfDocumento");
 /**
  * Creates a new license.
  * @param {Object} req - The request object.
@@ -115,33 +124,60 @@ async function deleteLicenciaByRut(req, res) {
   }
 };
 
-async function enviarLicenciaPorCorreo(req, res) {
+
+async function enviarLicenciaPorRUT(req, res) {
   try {
     const { params } = req;
-    const { error: paramsError } = licenciaIdSchema.validate(params);
-    if (paramsError) return respondError(req, res, 400, paramsError.message);
-    const [licencia, errorLicencia] = await LicenciasServices.enviarLicenciaPorCorreo(params.rut);
-    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
-    respondSuccess(req, res, 200, licencia);
-  } catch (error) {
-    handleError(error, "licencia.controller -> enviarLicenciaPorCorreo");
-    respondError(req, res, 400, error.message);
-  }
-};
+    const { rut } = params; // Obtener el RUT desde los parámetros de la ruta
 
-async function enviarLicenciaPorRUT(req, res) { 
- try {
+    // Llama a la función del servicio para enviar la licencia por RUT
+    const [persona, error] = await LicenciasServices.enviarLicenciaPorRUT(rut);
+
+    if (error) {
+      return respondError(req, res, 400, error); // Maneja el error correctamente
+    }
+
+    return respondSuccess(req, res, 200, persona); // Devuelve la respuesta exitosa
+  } catch (error) {
+    handleError(error, "licencia.controller -> enviarLicenciaPorRUT");
+    return respondError(req, res, 500, error.message); // Maneja los errores generales
+  }
+} 
+
+async function createLicenciaPorRut(req, res) {
+  try {
     const { params } = req;
-    const { error: paramsError } = licenciaIdSchema.validate(params);
-    if (paramsError) return respondError(req, res, 400, paramsError.message);
-    const [licencia, errorLicencia] = await LicenciasServices.enviarLicenciaPorRUT(params.rut);
-    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
-    respondSuccess(req, res, 200, licencia); 
- } catch (error) {
-   handleError(error, "licencia.controller -> enviarLicenciaPorRUT");
-   respondError(req, res, 400, error.message);
- }
-};
+    const { rut } = params; // Obten el RUT desde los parámetros
+    const { body } = req; // Datos de la licencia desde el cuerpo de la solicitud
+    const { TipoLicencia, FechaRetiro, EstadoLicencia } = body;
+    const pdfDocumento = req.file.buffer; 
+    // Obten el contenido del archivo PDF
+
+    // Aquí deberías validar los datos y asegurarte de que el RUT sea válido 
+    const userFound = await User.findOne({ rut: rut }); 
+    if (!userFound) return [null, "El usuario no existe"];
+    // Luego, crea la licencia y asocia el PDF al usuario identificado por el RUT
+    const [newLicencia, errorLicencia] = await LicenciasServices.createLicenciaPorRut(rut, {
+      TipoLicencia,
+      FechaRetiro,
+      EstadoLicencia,
+      pdfDocumento,
+    });
+
+    if (errorLicencia) {
+      return respondError(req, res, 400, errorLicencia);
+    }
+
+    if (!newLicencia) {
+      return respondError(req, res, 400, "No se creó la licencia");
+    }
+
+    respondSuccess(req, res, 201, newLicencia);
+  } catch (error) {
+    handleError(error, "licencia.controller -> createLicenciaPorRut");
+    respondError(req, res, 500, "No se creó la licencia");
+  }
+}
 
 module.exports = {
   createLicencia,
@@ -149,7 +185,7 @@ module.exports = {
   getLicenciaByRut,
   updateLicenciaByRut,
   deleteLicenciaByRut, 
-  enviarLicenciaPorCorreo, 
-  enviarLicenciaPorRUT,
+  enviarLicenciaPorRUT, 
+  createLicenciaPorRut,
 };
 

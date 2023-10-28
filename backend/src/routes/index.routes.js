@@ -1,3 +1,4 @@
+/* eslint-disable no-multiple-empty-lines */
 "use strict";
 // Importa el modulo 'express' para crear las rutas
 const express = require("express");
@@ -9,8 +10,9 @@ const userRoutes = require("./user.routes.js");
 const authRoutes = require("./auth.routes.js");
 
 const postulacionRoutes = require("./postulacion.routes.js");
-const validacionPosRoutes = require("./validacionPos.routes.js"); 
-
+// licencia y resExamen
+const licenciasRoutes = require("./licencias.routes.js"); 
+const resExamenRoutes = require("./resExamen.routes.js"); 
 /** Middleware de autenticación */
 const authenticationMiddleware = require("../middlewares/authentication.middleware.js");
 
@@ -32,17 +34,15 @@ router.use("/auth", authRoutes);
 
 
 // Define rutas opara las licencias 
-
-// router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
+router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
 // Define rutas para los resultados de examen 
-// router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
+router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
 
-// router.use("/licencias", authenticationMiddleware, licenciasRoutes); 
 
 
 // Define rutas para las postulaciones
 router.use("/postulacion", postulacionRoutes);
-router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
+// router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
 
 
 // define ruta para subir archivos

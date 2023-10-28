@@ -1,10 +1,24 @@
+/* eslint-disable padded-blocks */
 /* eslint-disable require-jsdoc */
 "use strict";
 
 const ResExamen = require("../models/resultadoExamen.model.js"); 
 const { handleError } = require("../utils/errorHandler");
-const nodemailer = require("nodemailer"); 
-require("dotenv").config();
+
+require("dotenv").config(); 
+const User = require("../models/user.model.js");  
+
+const sgMail = require("@sendgrid/mail");  
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+const multer = require("multer");
+const storage = multer.memoryStorage(); // Almacena el archivo en memoria
+const upload = multer({ storage: storage }); 
+exports.upload = upload.single("pdfDocumento"); 
+ 
+
+const emailUser = process.env.EMAIL_USER;
+
 
 /**
  * Creates a new ResExamen document in the database.
@@ -24,13 +38,35 @@ async function createResExamen(ResExamenData) {
         const newResExamen = new ResExamen({
             rut,
             fechaDocumento,
-            pdfDocumento: pdfDocumento,
+            pdfDocumento,
         }); 
         await newResExamen.save();
         return [newResExamen, null];
     } catch (error) {
         handleError(error, "ResExamen.service -> createResExamen");
     }
+};
+
+async function createResExamenPorRut(rut, ResExamenData) {
+ try { 
+   const { fechaDocumento, pdfDocumento } = ResExamenData; 
+   const ResExamenFound = await ResExamen.findOne({ rut: rut }); 
+   if (ResExamenFound) return [null, "El resultado de examen ya existe"]; 
+    const newResExamen = new ResExamen({
+        rut,
+        fechaDocumento,
+        pdfDocumento: {
+            data: pdfDocumento,
+            contentType: "application/pdf", // Tipo de contenido para archivos PDF
+        },
+    });
+    await newResExamen.save(); 
+    return [newResExamen, null];
+
+ } catch (error) {
+    handleError(error, "ResExamen.service -> createResExamenPorRut");
+  }
+
 };
 
 /**
@@ -126,94 +162,64 @@ async function deleteResExamenByRut(rut) {
         handleError(error, "ResExamen.service -> deleteResExamenByRut");
     }
 };
-
-async function enviarResExamenPorCorreo(rut, pdfDocumento) { 
- try {
-    // 1. Buscar la persona por RUT
- const persona = await User.findOne({ rut });
-
- if (!persona) {
-   return [null, "No se encontró una persona con este RUT"];
- }
-
- // 2. Verificar que la persona tenga una dirección de correo electrónico
- if (!persona.email) {
-   return [null, "La persona no tiene una dirección de correo electrónico registrada"];
- }
-
- // 3. Configurar el transporte de correo (usando las credenciales centralizadas o de la aplicación)
- const transporter = nodemailer.createTransport({
-   service: process.env.EMAIL_SERVICE, // Cargar desde variables de entorno
-   auth: {
-     user: process.env.EMAIL_USER, // Cargar desde variables de entorno
-     pass: process.env.EMAIL_PASSWORD, // Cargar desde variables de entorno
-   },
- }); 
- const mailOptions = {
-    from: process.env.EMAIL_USER, // Correo de la aplicación
-    to: persona.email, // Correo de la persona
-    subject: "Tus resultados de examen",
-    text: "Aquí están tus resultados de los examenes:",
-    attachments: [
-      {
-        filename: "ResultadosExamenes.pdf",
-        content: pdfDocumento, // Contenido del archivo PDF de la licencia
-      },
-    ],
-  }; 
-
-  await transporter.sendMail(mailOptions);
-    return [persona, null];
-  } catch (error) {
-    handleError(error, "ResExamen.service -> enviarResExamenPorCorreo");
-  }
-};    
+  
 
 async function enviarExamenPorRUT(rut) {
   try {
     // 1. Buscar la persona por RUT
-    const persona = await User.findOne({ rut });
-
+    const persona = await User.findOne({ rut }); 
+    const email = persona.email;  
+    
     if (!persona) {
       return [null, "No se encontró una persona con este RUT"];
     }
-
+    
     // 2. Verificar que la persona tenga una dirección de correo electrónico
     if (!persona.email) {
       return [null, "La persona no tiene una dirección de correo electrónico registrada"];
-    }
+    } 
+    
 
     // 3. Obtener el PDF de la licencia desde la base de datos (debes implementar esta parte)
-    const pdfDocumento = await getResExamenByRut(rut);
+    const pdfDocumento = getResExamenByRut(rut); 
+    const { fechaDocumento, estadoExamen } = await ResExamen.findOne({ rut: rut }); 
+    const html = `  
+    <p>Adjunto encontrarás tus resultados de Examen. Aquí están los detalles:</p>
+      <ul>
+        <li>Nombre: ${persona.nombre}</li>
+        <li>RUT: ${persona.rut}</li>
+        <li>Fecha del Documento: ${fechaDocumento}</li> 
+        <li>Estado de Examenes: ${estadoExamen}</li>
+      </ul>
+    `;
 
-    // 4. Configurar el transporte de correo (usando las credenciales centralizadas o de la aplicación)
-    const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE, // Cargar desde variables de entorno
-      auth: {
-        user: process.env.EMAIL_USER, // Cargar desde variables de entorno
-        pass: process.env.EMAIL_PASSWORD, // Cargar desde variables de entorno
-      },
-    });
-
-    // 5. Preparar el correo
-    const mailOptions = {
-      from: process.env.EMAIL_USER, // Correo de la aplicación
-      to: persona.email, // Correo de la persona
-      subject: "Tus resultados de examen",
-      text: "Aquí están tus resultados de los examenes:",
+    const subject = "Resultados de examen de Conducir";
+    const text = "Aquí estan tus Resultados de Examenes Adjunto."; 
+    // 5. Enviar el correo
+    const msg = {
+      to: email,
+      from: emailUser, // Tu dirección de correo
+      subject,
+      text,
+      html,
       attachments: [
         {
+          content: pdfDocumento.toString("base64"), // Contenido del archivo PDF de la licencia
           filename: "ResultadosExamenes.pdf",
-          content: pdfDocumento, // Contenido del archivo PDF de la licencia
+          type: "application/pdf",
+          disposition: "attachment",
         },
       ],
-    }; 
-  
-    await transporter.sendMail(mailOptions);
-      return [persona, null];
-    } catch (error) {
-      handleError(error, "ResExamen.service -> enviarResExamenPorCorreo");
-    }
+    };
+
+    await sgMail.send(msg);
+
+    return [persona, null];
+    
+    
+  } catch (error) {
+    handleError(error, "ResExamen.service -> enviarExamenPorRUT");
+  }
 }
 // Funcion enviar 
 module.exports = { 
@@ -222,7 +228,7 @@ module.exports = {
     getResExamenByRut,
     updateResExamenByRut, 
     deleteResExamenByRut, 
-    enviarResExamenPorCorreo,
-    enviarExamenPorRUT,
+    enviarExamenPorRUT, 
+    createResExamenPorRut, 
 };
 

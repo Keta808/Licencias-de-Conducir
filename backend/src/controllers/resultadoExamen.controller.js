@@ -1,3 +1,4 @@
+/* eslint-disable no-multiple-empty-lines */
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 "use strict"; 
@@ -5,8 +6,13 @@
 const ResExamenServices = require("../services/ResExamen.service.js"); 
 const { respondSuccess, respondError } = require("../utils/resHandler"); 
 const { handleError } = require("../utils/errorHandler");
-const { resExamenBodySchema, resExamenIdSchema } = require("../schema/ResExamen.schema.js");
-
+const { resExamenBodySchema, resExamenIdSchema } = require("../schema/ResExamen.schema.js");  
+require("dotenv").config();
+const multer = require("multer");
+const storage = multer.memoryStorage(); // Almacena el archivo en memoria
+const upload = multer({ storage: storage }); 
+exports.upload = upload.single("pdfDocumento");
+const User = require("../models/user.model.js"); 
 /**
  * Creates a new resultado de examen.
  * @param {Object} req - The request object.
@@ -29,7 +35,31 @@ async function createResExamen(req, res) {
         respondError(req, res, 500, "No se creo el resultado de examen");
     }
 }; 
+async function createResExamenPorRut(req, res) {
+ try {  
+    const { params } = req;
+    const { rut } = params; // Obten el RUT desde los parámetros
+    const { body } = req; // Datos de la licencia desde el cuerpo de la solicitud
+    const { fechaDocumento } = body;
+    const pdfDocumento = req.file.buffer; 
+    // Obten el contenido del archivo PDF
+    const userFound = await User.findOne({ rut: rut }); 
+    if (!userFound) return [null, "El usuario no existe"]; 
 
+    const [newResExamen, errorResExamen]= await ResExamenServices.createResExamenPorRut(rut, {
+        fechaDocumento,
+        pdfDocumento,
+      }); 
+     if (errorResExamen) return respondError(req, res, 400, errorResExamen);  
+        if (!newResExamen) { 
+            return respondError(req, res, 400, "No se creo el resultado de examen");
+        }
+      respondSuccess(req, res, 201, newResExamen);
+ } catch (error) {
+    handleError(error, "resultadoExamen.controller -> createResExamen");
+    respondError(req, res, 500, "No se creo el resultado de examen");
+}
+};
 /**
  * Retrieves all resultado de examenes.
  * @param {Object} req - The request object.
@@ -120,33 +150,23 @@ async function deleteResExamenByRut(req, res) {
     };
 };
 
-async function enviarResExamenPorCorreo(req, res) { 
-    try { 
-        const { params } = req; 
-        const { error: paramsError } = resExamenIdSchema.validate(params); 
-        if (paramsError) return respondError(req, res, 400, paramsError.message);
-        const [resExamen, errorResExamen] = await ResExamenServices.enviarResExamenPorCorreo(params.rut); 
-        if (errorResExamen) return respondError(req, res, 404, errorResExamen); 
-        respondSuccess(req, res, 200, resExamen);
-    } catch (error) {
-        handleError(error, "resultadoExamen.controller -> enviarResExamenPorCorreo");
-        respondError(req, res, 400, error.message);
-    };
-}; 
+
 
 async function enviarExamenPorRUT(req, res) { 
     try { 
-        const { params } = req; 
-        const { error: paramsError } = resExamenIdSchema.validate(params); 
-        if (paramsError) return respondError(req, res, 400, paramsError.message);
-        const [resExamen, errorResExamen] = await ResExamenServices.enviarExamenPorRUT(params.rut); 
+        const { params } = req;  
+        const { rut } = params;  
+        const [resExamen, errorResExamen] = await ResExamenServices.enviarExamenPorRUT(rut); 
         if (errorResExamen) return respondError(req, res, 404, errorResExamen); 
         respondSuccess(req, res, 200, resExamen);
     } catch (error) {
         handleError(error, "resultadoExamen.controller -> enviarExamenPorRUT");
         respondError(req, res, 400, error.message);
     };
-}
+} 
+
+
+
 
 module.exports = {
     createResExamen,
@@ -154,6 +174,8 @@ module.exports = {
     getResExamenByRut,
     updateResExamenByRut,
     deleteResExamenByRut,
-    enviarResExamenPorCorreo, 
-    enviarExamenPorRUT,
+ 
+    enviarExamenPorRUT, 
+    createResExamenPorRut,
+
 };
