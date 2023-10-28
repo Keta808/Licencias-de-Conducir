@@ -9,7 +9,7 @@ const ValidacionPosSchema = new mongoose.Schema({
         required: true,
     },
     estado: {
-        type: Boolean, // true=aprobado, false=rechazado
+        type: Boolean,
         required: true,
     },
 });

@@ -21,7 +21,7 @@ async function getPostulaciones() {
  */
 async function createPostulaciones(postulacion) {
     try {
-        const { nombre, rut, direccion, tramite } = postulacion;
+        const { nombre, rut, edad, direccion, tramite } = postulacion;
 
         const postulacionFound = await Postulacion.findOne({ rut: postulacion.rut });
         if (postulacionFound) return [null, "La postulacion ya existe"];
@@ -29,6 +29,7 @@ async function createPostulaciones(postulacion) {
         const newPostulacion = new Postulacion({
             nombre,
             rut,
+            edad,
             direccion,
             tramite,
 
@@ -60,7 +61,7 @@ async function getPostulacionById(id) {
  */
 async function updatePostulacion(id, postulacion) {
     try {
-        const { nombre, rut, email, direccion, tramite } = postulacion;
+        const { nombre, rut, edad, direccion, tramite } = postulacion;
 
         const postulacionFound = await Postulacion.findById(id);
         if (!postulacionFound) return [null, "La postulacion no existe"];
@@ -68,7 +69,7 @@ async function updatePostulacion(id, postulacion) {
         const postulacionUpdated = await Postulacion.findByIdAndUpdate(id, {
             nombre,
             rut,
-            email,
+            edad,
             direccion,
             tramite,
         }, { new: true });

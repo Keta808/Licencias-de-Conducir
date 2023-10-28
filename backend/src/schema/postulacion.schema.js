@@ -16,6 +16,10 @@ const postulacionBodySchema = Joi.object({
         "string.empty": "El rut no puede estar vacío.",
         "any.required": "El rut es obligatorio.",
     }),
+    edad: Joi.string().required().messages({
+        "string.empty": "La edad no puede estar vacía.",
+        "any.required": "La edad es obligatoria.",
+    }),
 
     direccion: Joi.string().required().messages({
         "string.empty": "La direccion no puede estar vacía.",

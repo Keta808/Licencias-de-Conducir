@@ -10,8 +10,10 @@ const validacionPosBodySchema = Joi.object({
     }),
 
     estado: Joi.string().required().messages({
+        "string.base": "El estado debe ser de tipo string.",
         "string.empty": "El estado no puede estar vacío.",
         "any.required": "El estado es obligatorio.",
+        "any.only": "El estado proporcionado no es válido.",
     }),
 }).messages({
     "object.unknown": "No se permiten propiedades adicionales.",

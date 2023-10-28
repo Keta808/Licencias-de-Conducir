@@ -44,7 +44,9 @@ router.use("/auth", authRoutes);
 router.use("/postulacion", postulacionRoutes);
 router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
 
-// Define rutas para los uploads
+
+// define ruta para subir archivos
+// const uploadRoutes = require("./upload.routes.js");
 // router.use("/upload", uploadRoutes);
 
 // Exporta el enrutador
