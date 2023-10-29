@@ -139,6 +139,7 @@ async function deleteHora(id) {
 async function getHorasDisponibles(rut) {
     try {
 
+        //si está aprobado:
         const validacionFound = await validacionPostulacion.findOne({ rut: rut });
         if(!validacionFound) return [null, "El usuario no está aprobado"];
         if(!validacionFound.estado) return [null, "El usuario no está aprobado"];
@@ -162,6 +163,7 @@ async function elegirHora(id, rut){
 
         const horaFound = await Hora.findById(id);
 
+        //si está aprobado:
         const validacionFound = await validacionPostulacion.findOne({ rut: rut });
         if(!validacionFound.estado) return [null, "El usuario no está aprobado"];
         

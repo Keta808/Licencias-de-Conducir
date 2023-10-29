@@ -1,69 +1,34 @@
 "use strict";
 const mongoose = require("mongoose");  
 
-/**
- * 
- * @param {*} year 
- * @returns 
- */
+
 function validarYear(year) {
-    const fecha = new Date();
-    const yearActual = fecha.getFullYear();
+    let fecha = new Date();
+    let yearActual = fecha.getFullYear();
     return year >= yearActual;
 }
 
-/**
- * 
- * @param {*} mes 
- * @returns 
- */
-function validarMes(mes) {
-    const fecha = new Date();
-    const mesActual = fecha.getMonth() + 1;
 
+function validarMes(mes) {
+    let fecha = new Date();
+    let mesActual = fecha.getMonth() + 1;
     return mes >= 1 && mes <= 12 && mes >= mesActual;
 }
 
-/**
- * 
- * @param {*} dia 
- * @returns 
- */
 function validarDia(dia) {
-    const fecha = new Date();
-    return dia >= 1 && dia <= 31;
+    let fecha = new Date();
+    return dia >= 1 && dia <= 31 && dia >= fecha.getDate();
 }
 
-/**
- * 
- * @param {*} valor 
- * @param {*} mes 
- * @param {*} año 
- * @returns 
- */
 
-
-/**
- * 
- * @param {*} hora 
- * @returns 
- */
 function validarHora(hora) {
     return hora >= 8 && hora <= 15;
 }
 
-/**
- * 
- * @param {*} minuto 
- * @returns 
- */
 function validarMinuto(minuto) {
     return minuto >= 0 && minuto <= 59;
 }   
 
-/**
- * 
- */
 const fechaSchema = new mongoose.Schema({
     year: {
         type: Number,
@@ -86,7 +51,7 @@ const fechaSchema = new mongoose.Schema({
         required: true,
         validate: {
           validator: validarDia,
-          message: "El día debe ser entre 1 y 31",
+          message: "El día debe ser entre 1 y 31 y mayor o igual que el actual",
         },
       },
 
@@ -95,7 +60,7 @@ const fechaSchema = new mongoose.Schema({
         required: true,
         validate: {
             validator: validarHora,
-            message: "La hora debe ser entre 0 y 23",
+            message: "La hora debe ser entre 8 y 15",
         },
     },
     minuto: {
