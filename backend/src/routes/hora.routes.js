@@ -9,30 +9,36 @@ const router = express.Router();
 
 router.use(authenticationMiddleware);
 
-// Define the routes for the hours
+// get todas las horas.
 router.get("/", authorizationMiddleware.isAdmin, 
     authorizationMiddleware.isFuncionario, horaController.getHoras);
     
-router.get("/disponibles", horaController.getHorasDisponibles);
+//get horas disponibles y se verifica con un rut    
+router.get("/disponibles/:rut", horaController.getHorasDisponibles);
 
+// post una hora. 
 router.post("/", authorizationMiddleware.isAdmin, 
     authorizationMiddleware.isFuncionario, horaController.createHora);
 
+// get una hora por id.
 router.get("/:id", authorizationMiddleware.isAdmin,
     authorizationMiddleware.isFuncionario, horaController.getHoraById);
 
+// put una hora por id.
 router.put("/:id",
 authorizationMiddleware.isAdmin,
 authorizationMiddleware.isFuncionario,
 horaController.updateHora,
 );
 
+// delete una hora por id.
 router.delete("/:id",
 authorizationMiddleware.isAdmin,
 authorizationMiddleware.isFuncionario,
 horaController.deleteHora,
 );
 
+// put para asignar una hora a un usuario mediante el rut de la sesion
 router.put("/asignar/:id", horaController.elegirHora);
 
 module.exports = router;

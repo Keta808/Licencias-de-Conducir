@@ -3,6 +3,8 @@
 // Importa el modulo 'express' para crear las rutas
 const express = require("express");
 
+const validacionPosRoutes = require("./validacionPos.routes.js");
+
 /** Enrutador de usuarios  */
 const userRoutes = require("./user.routes.js");
 

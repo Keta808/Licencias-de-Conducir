@@ -2,6 +2,7 @@
 /* eslint-disable require-jsdoc */
 "use strict";
 
+const validacionPostulacion = require("../models/validacionPos.model.js");
 const Hora = require("../models/horas.model.js");
 const { handleError } = require("../utils/errorHandler");
 
@@ -33,9 +34,7 @@ async function createHora(hora) {
 
         if(hora.rut != null){
             const horaFound = await Hora.findOne({ rut: hora.rut });
-        
             if (horaFound) return [null, "La hora ya existe"];
-          
         }
 
         const newHora = new Hora({
@@ -50,6 +49,7 @@ async function createHora(hora) {
             disponibilidad,
             tipo
         });
+        
         await newHora.save();
 
         return [newHora, null];
@@ -136,10 +136,14 @@ async function deleteHora(id) {
  * 
  */
 
-async function getHorasDisponibles() {
+async function getHorasDisponibles(rut) {
     try {
-        const horas = await Hora.find({disponibilidad: true}) .exec();
 
+        const validacionFound = await validacionPostulacion.findOne({ rut: rut });
+        if(!validacionFound) return [null, "El usuario no está aprobado"];
+        if(!validacionFound.estado) return [null, "El usuario no está aprobado"];
+
+        const horas = await Hora.find();      
         if(!horas) return [null, "No hay horas disponibles"];
         
         return [horas, null];
@@ -157,6 +161,10 @@ async function elegirHora(id, rut){
     try {
 
         const horaFound = await Hora.findById(id);
+
+        const validacionFound = await validacionPostulacion.findOne({ rut: rut });
+        if(!validacionFound.estado) return [null, "El usuario no está aprobado"];
+        
         if (!horaFound) return [null, "La hora no existe"];
         if(horaFound.rut != null) return [null, "La hora ya esta asignada a un usuario" ];
         if(horaFound.disponibilidad == false) return [null, "La hora no esta disponible"];

@@ -33,7 +33,7 @@ async function createHora(req,res){
     
     try {
         const { body } = req;
-        console.log(body);
+
       const { error: bodyError } = horaBodySchema.validate(body);
       if (bodyError) return respondError(req, res, 400, bodyError.message);
 
@@ -46,6 +46,7 @@ async function createHora(req,res){
 
         respondSuccess(req, res, 201, newHora);
     } catch (error) {
+
         handleError(error, "hora.controller -> createHora");
         respondError(req, res, 500, "No se creo la hora");
     }
@@ -134,7 +135,10 @@ async function deleteHora(req,res){
 
 async function getHorasDisponibles(req,res){
     try {
-        const [horas, errorHoras] = await HoraService.getHorasDisponibles();
+
+        const {rut} =req.params;
+        console.log(rut);
+        const [horas, errorHoras] = await HoraService.getHorasDisponibles(rut);
         if (errorHoras) return respondError(req, res, 404, errorHoras);
 
         horas.length === 0
