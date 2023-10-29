@@ -12,7 +12,7 @@ const userRoutes = require("./user.routes.js");
 const authRoutes = require("./auth.routes.js");
 
 const postulacionRoutes = require("./postulacion.routes.js");
-const validacionPosRoutes = require("./validacionPos.routes.js");
+
 // licencia y resExamen
 const licenciasRoutes = require("./licencias.routes.js"); 
 const resExamenRoutes = require("./resExamen.routes.js"); 
