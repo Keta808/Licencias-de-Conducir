@@ -1,5 +1,6 @@
 const multer = require("multer");
 
+
 /** configuracion de multer */
 function uploadFile() {
     const storage = multer.diskStorage({
@@ -7,12 +8,14 @@ function uploadFile() {
         filename: function(_req, file, cb) {
             var extension = file.originalname.slice(file.originalname.lastIndexOf("."));
             cb(null, Date.now() + extension);
-        }
+        },
     });
 
-    const upload = multer({ storage: storage }).single("file");
+    const upload = multer({ storage: storage }).fields([
+        { name: "file", maxCount: 10 },
+    ]);
 
     return upload;
 }
 
-module.exports = uploadFile;
+module.exports = uploadFile; 

@@ -10,6 +10,7 @@ const userRoutes = require("./user.routes.js");
 const authRoutes = require("./auth.routes.js");
 
 const postulacionRoutes = require("./postulacion.routes.js");
+const validacionPosRoutes = require("./validacionPos.routes.js");
 // licencia y resExamen
 const licenciasRoutes = require("./licencias.routes.js"); 
 const resExamenRoutes = require("./resExamen.routes.js"); 
@@ -42,7 +43,7 @@ router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
 
 // Define rutas para las postulaciones
 router.use("/postulacion", postulacionRoutes);
-// router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
+router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
 
 
 // define ruta para subir archivos
@@ -52,7 +53,7 @@ router.use("/postulacion", postulacionRoutes);
 // Define rutas para subir archivos de las postulaciones
 const uploadFile = require("../middlewares/multer.middlewares.js");
 router.post("/uploadFile", uploadFile(), (req, res) => {
-    console.log(req.file);
+    // console.log(req.file);
     res.send("Archivo subido correctamente");
 });
 
