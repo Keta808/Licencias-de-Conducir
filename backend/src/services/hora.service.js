@@ -28,6 +28,41 @@ async function getHoras() {
  * @returns {Promise} Promesa con el objeto de hora creado
  */
 
+function validarRutDigitoVerificador(rut) {
+    const numeros = rut.slice(0, -1);
+    const digitoVerificador = rut.slice(-1).toUpperCase();
+
+    let suma = 0;
+    let multiplo = 2;
+
+    for (let i = numeros.length - 1; i >= 0; i--) {
+        suma += parseInt(numeros.charAt(i)) * multiplo;
+        multiplo = multiplo === 7 ? 2 : multiplo + 1;
+    }
+
+    const resultado = 11 - (suma % 11);
+    const digitoCalculado = resultado === 11 ? 0 : resultado;
+    console.log("digito calculado y verificador");
+    console.log(digitoCalculado, digitoVerificador);
+    return digitoCalculado.toString() === digitoVerificador;
+}
+
+function validarRut(rut) {
+    // Expresión regular para validar RUT chileno en varios formatos
+    const patron = /^(\d{1,3}\.\d{1,3}\.\d{1,3}|\d{1,9})-[\dkK]$/;
+
+
+
+    // Eliminar puntos y guiones adicionales para tener un formato consistente
+    const rutLimpio = rut.replace(/\./g, '').replace('-', '');
+
+    // Verificar si el RUT coincide con el patrón
+    console.log(rutLimpio);
+    console.log("patron test");
+    console.log(patron.test(rutLimpio));
+    return patron.test(rut) && validarRutDigitoVerificador(rutLimpio);
+}
+
 async function createHora(hora) {
     try {
         const { rut, fecha, disponibilidad, tipo } = hora;
@@ -36,6 +71,8 @@ async function createHora(hora) {
             const horaFound = await Hora.findOne({ rut: hora.rut });
             if (horaFound) return [null, "La hora ya existe"];
         }
+
+        if(validarRut(rut) == false) return [null, "El rut no es valido"];
 
         const newHora = new Hora({
             rut,
@@ -143,6 +180,7 @@ async function getHorasDisponibles(rut) {
         const validacionFound = await validacionPostulacion.findOne({ rut: rut });
         if(!validacionFound) return [null, "El usuario no está aprobado"];
         if(!validacionFound.estado) return [null, "El usuario no está aprobado"];
+        if(validarRut(rut) == false) return [null, "El rut no es valido"];
 
         const horas = await Hora.find();      
         if(!horas) return [null, "No hay horas disponibles"];
