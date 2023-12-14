@@ -14,10 +14,12 @@ function Login() {
   }
 
   return (
-    <div>
-      <h2>Inicia sesion!</h2>
-      <LoginForm />
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '150vh', marginBottom: '100px' }}>
+    <div style={{ textAlign: 'center', marginBottom: '100px' }}>
+      <h2>Inicia sesión!</h2>
     </div>
+    <LoginForm />
+  </div>
   );
 }
 

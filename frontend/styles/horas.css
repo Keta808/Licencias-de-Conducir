@@ -1,0 +1,23 @@
+/* Estilos.css */
+.container {
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .table-container {
+    width: 100%;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
