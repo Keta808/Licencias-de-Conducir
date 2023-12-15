@@ -15,7 +15,7 @@ function LoginForm() {
     login(data).then(() => {
       navigate('/');
     });
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
