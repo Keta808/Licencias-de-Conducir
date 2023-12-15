@@ -1,14 +1,14 @@
 import { useNavigate, Route, Routes } from 'react-router-dom';
 import PostulacionForm from '../components/PostulacionForm';
 
-function App() {
+function postulacion() {
+  const navigate = useNavigate();
   return (
-    <Routes>
-      <Route path="/postulacion" element={<PostulacionForm />} />
-      {/* Otros routes si los hay */}
-    </Routes>
+    <div>
+      <PostulacionForm />
+    </div>
   );
 }
 
-export default App;
+export default postulacion;
 
