@@ -21,24 +21,47 @@ function PageRoot() {
 
   const { user } = useAuth();
 
-  return (
-    <div>
+  if(user.roles[0].name === 'admin'){
+    return (
+      console.log(user),
       <div>
-        <button onClick={() => navigate('/horas')}
-        >
-          Horas
-        </button>
-        <button onClick = {() => navigate('/')}
-        >
-          Home 
-        </button>
-        <h1>Aqui deberia ir un header</h1>
-        <p>Estas logeado como: {user.email}</p>
-        <button onClick={handleLogout}>Cerrar sesion</button>
+        <div>
+          <button onClick={() => navigate('/horas')}
+          >
+            Horas
+          </button>
+          <button onClick = {() => navigate('/')}
+          >
+            Home 
+          </button>
+          <h1>Aqui deberia ir un header</h1>
+          <p>Estas logeado como: {user.email}</p>
+          <button onClick={handleLogout}>Cerrar sesion</button>
+        </div>
+        <Outlet />
       </div>
-      <Outlet />
-    </div>
-  );
+    );
+  }
+  else{
+    return(    
+      console.log(user.roles[0].name),
+          <div>
+            
+            <button onClick={() => navigate('/')}
+            >
+              Home
+            </button>
+            <h1>Aqui deberia ir un header</h1>
+            <p>Estas logeado como: {user.email}</p>
+            <button onClick={handleLogout}>Cerrar sesion</button>
+          </div>
+        
+    );
+  }
+
+
+
+  
 }
 
 export default Root;
