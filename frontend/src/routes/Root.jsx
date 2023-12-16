@@ -26,6 +26,17 @@ function PageRoot() {
   return (
     <div>
       <div>
+        <button onClick={() => navigate('/horas')}
+        >
+          Horas
+        </button>
+        <button onClick={()=> navigate('/postulacion')}>
+          Postulacion
+        </button>
+        <button onClick = {() => navigate('/')}
+        >
+          Home 
+        </button>
         <h1>Aqui deberia ir un header</h1>
         <p>Estas logeado como: {user.email}</p>
         <button onClick={handleLogout}>Cerrar sesion</button> 
