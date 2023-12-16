@@ -33,12 +33,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Define las rutas para los usuarios /api/usuarios 
-// router.post("/AgregarLicencia", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, LicenciasController.createLicencia); // Crea una nueva licencia 
+
 router.get("/Licencias", LicenciasController.getLicencias); // Obtiene todas las licencias 
-router.get("/Buscar-Licencia/:rut", LicenciasController.getLicenciaByRut);
-router.get("/Buscar-Licencia/:rut", LicenciasController.getLicenciaByRut); 
-// router para enviar por correo la licencia 
-// router.post("/Enviar-Licencia/:numeroLicencia", LicenciasController.sendLicenciaById);
+
+router.get("/Buscar-Licencia/:rut", LicenciasController.getLicenciaByRut, authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario); // Obtiene una licencia por su rut
+
 
 router.put("/ActualizaPorRut/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 
            LicenciasController.updateLicenciaByRut); // Actualiza una licencia por su rut

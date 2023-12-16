@@ -17,7 +17,7 @@ function LoginForm() {
     login(data).then(() => {
       navigate('/');
     });
-  };
+  }
 
   return (
     <div className="login-form-container">

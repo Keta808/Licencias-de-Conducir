@@ -30,6 +30,12 @@ function PageRoot() {
           >
             Horas
           </button>
+          <button onClick={()=> navigate('/postulacion')}>
+          Postulacion
+        </button> 
+        <button onClick={()=> navigate('/licencias')}>
+          Licencias 
+        </button> 
           <button onClick = {() => navigate('/')}
           >
             Home 
