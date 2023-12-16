@@ -1,9 +1,9 @@
 import React from "react"; 
-// import './Licencia.css';
-import {useState, useEffect} from 'react'; 
-
+import {useState, useEffect} from 'react';  
+import axios from "../services/root.service";  
+import CrearLicenciaForm from '../components/CrearLicenciaForm';
 const Title = <h1> Generar Licencias </h1> 
-
+import { buscarLicenciaPorRut } from '../services/licencia.service';
 
 function Licencia() { 
   const [rut, setRut] = useState("");
@@ -14,20 +14,29 @@ function Licencia() {
   
   const handleSearch = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/licencias/Buscar-Licencia/${encodeURIComponent(rut)}`);
-      const data = await response.json();
-      setLicencia(data || null);
+      const response = await buscarLicenciaPorRut(rut);
+      console.log("Respuesta de buscarLicenciaPorRut:", response.data);
+      console.log("Estado HTTP:", response.status);
+      setLicencia(response.data || null);
       setBusquedaRealizada(true);
       setMostrarBusqueda(true);
+
     } catch (error) {
       console.error("Error al buscar licencia:", error);
     }
-  };   
+  };
+  
+
   const handleToggleBusqueda = () => {
     setMostrarBusqueda((prevMostrarBusqueda) => !prevMostrarBusqueda);
     // También podríamos resetear busquedaRealizada si deseas que el mensaje aparezca solo después de cada búsqueda
      setBusquedaRealizada(false);
-  };
+  }; 
+
+const [mostrarFormulario, setMostrarFormulario] = useState(false);
+const handleToggleForm = () => {
+   setMostrarFormulario((prevMostrarFormulario) => !prevMostrarFormulario);
+};
 
   return (
     <div>
@@ -36,7 +45,10 @@ function Licencia() {
       <div>
         <button onClick={handleToggleBusqueda}>
           {mostrarBusqueda ? "Ocultar Licencia" : "Ver Licencia"}
-        </button>
+        </button> 
+        <button onClick={handleToggleForm}>
+      {mostrarFormulario ? "Ocultar Formulario" : "Crear Licencia"}
+   </button>
       </div>
 
       {mostrarBusqueda && (
@@ -51,19 +63,20 @@ function Licencia() {
           <button onClick={handleSearch}>Buscar</button>
 
           {busquedaRealizada && licencia ? (
-            <div>
-              <h2>Datos de la licencia:</h2>
-              <p>Rut: {licencia.rut}</p>
-              <p>Tipo de Licencia: {licencia.TipoLicencia}</p>
-              <p>Fecha de Retiro: {licencia.FechaRetiro}</p>
-              <p>Estado de Licencia: {licencia.EstadoLicencia}</p>
-              {/* Agrega más detalles según tu modelo de licencia */}
-            </div>
-          ) : (
-            <p>{busquedaRealizada ? `No se encontró licencia para el usuario con RUT ${rut}.` : ""}</p>
-          )}
+  <div>
+    <h2>Datos de la licencia:</h2>
+    <p>Rut: {licencia['rut']}</p>
+    <p>Tipo de Licencia: {licencia['TipoLicencia']}</p>
+    <p>Fecha de Retiro: {licencia['FechaRetiro']}</p>
+    <p>Estado de Licencia: {licencia['EstadoLicencia']}</p>
+    {/* Agrega más detalles según tu modelo de licencia */}
+  </div>
+) : (
+  <p>{busquedaRealizada ? `No se encontró licencia para el usuario con RUT ${rut}.` : ""}</p>
+)}
         </div>
-      )}
+      )} 
+      {mostrarFormulario && <CrearLicenciaForm />}
     </div>
   );
 }   

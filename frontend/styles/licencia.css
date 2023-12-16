@@ -1,0 +1,42 @@
+/* CrearLicenciaForm.css */
+
+/* Estilo general del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilo de las etiquetas */
+  label {
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  /* Estilo de los campos de entrada */
+  input,
+  select,
+  button {
+    margin-bottom: 16px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Estilo del botón de envío */
+  button {
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  /* Estilo para los mensajes de error */
+  span {
+    color: #f00;
+  }
+  

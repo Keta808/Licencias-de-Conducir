@@ -70,17 +70,17 @@ async function getLicenciaByRut(req, res) {
     const { params } = req;
     const { rut } = params;
 
-    console.log("RUT:", rut);
 
     const [licencia, errorMessage, pdfDocumento] = await LicenciasServices.getLicenciaByRut(rut);
 
     if (!licencia) {
-      console.error("Error en el servicio:", errorMessage);
+      
       return respondError(req, res, 404, errorMessage);
     }
 
     // Si hay un pdfDocumento, devolverlo
     if (pdfDocumento) {
+      // eslint-disable-next-line quotes
       res.contentType('application/pdf');
       res.send(pdfDocumento.data);
     } else {
