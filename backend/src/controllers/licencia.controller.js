@@ -68,16 +68,30 @@ async function getLicencias(req, res) {
 async function getLicenciaByRut(req, res) {
   try {
     const { params } = req;
-    const { error: paramsError } = licenciaIdSchema.validate(params);
-    if (paramsError) return respondError(req, res, 400, paramsError.message);
-    const [licencia, errorLicencia] = await LicenciasServices.getLicenciaByRut(params.rut);
-    if (errorLicencia) return respondError(req, res, 404, errorLicencia);
-    respondSuccess(req, res, 200, licencia);
+    const { rut } = params;
+
+    console.log("RUT:", rut);
+
+    const [licencia, errorMessage, pdfDocumento] = await LicenciasServices.getLicenciaByRut(rut);
+
+    if (!licencia) {
+      console.error("Error en el servicio:", errorMessage);
+      return respondError(req, res, 404, errorMessage);
+    }
+
+    // Si hay un pdfDocumento, devolverlo
+    if (pdfDocumento) {
+      res.contentType('application/pdf');
+      res.send(pdfDocumento.data);
+    } else {
+      respondSuccess(req, res, 200, licencia);
+    }
   } catch (error) {
     handleError(error, "licencia.controller -> getLicenciaByRut");
-    respondError(req, res, 400, error.message);
+    respondError(req, res, 500, error.message);
   }
-};
+}
+
 
 /**
  * Updates a license by its RUT.

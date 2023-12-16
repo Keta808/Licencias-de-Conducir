@@ -106,20 +106,28 @@ async function getLicencias() {
  */
 async function getLicenciaByRut(rut) {
   try {
+    console.log("RUT en servicios:", rut);
+
     // Busca la licencia por RUT
     const licencia = await Licencia.findOne({ rut: rut }).lean().exec();
+
+    console.log("Licencia encontrada en servicios:", licencia);
 
     if (!licencia) return [null, "No hay licencias disponibles"];
 
     // Verifica que se haya encontrado la licencia y que contenga el campo pdfDocumento
-    if (!licencia.pdfDocumento) return [null, "La licencia no contiene un documento PDF"];
+    if (!licencia.pdfDocumento) {
+      return [null, "La licencia no contiene un documento PDF", null];
+    }
 
     // Retorna tanto los datos del modelo de licencia como el buffer del documento
     return [licencia, licencia.pdfDocumento];
   } catch (error) {
     handleError(error, "licencia.service -> getLicenciaByRut");
+    return [null, "Error en el servicio al buscar la licencia", null];
   }
-}  
+}
+  
 
 /**
  * Updates a license in the database by its rut.
