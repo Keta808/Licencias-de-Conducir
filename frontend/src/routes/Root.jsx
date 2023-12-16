@@ -32,7 +32,11 @@ function PageRoot() {
           </button>
           <button onClick={()=> navigate('/postulacion')}>
           Postulacion
-        </button> 
+          </button>
+          <button onClick={()=> navigate('/validacionPos')}>
+          Validacion Postulacion
+          </button>
+
         <button onClick={()=> navigate('/licencias')}>
           Licencias 
         </button> 

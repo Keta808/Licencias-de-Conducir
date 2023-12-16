@@ -7,6 +7,7 @@ import ErrorPage from './routes/ErrorPage.jsx';
 import Login from './routes/Login.jsx';
 import Horas from './routes/Horas.jsx';
 import Postulacion from './routes/Postulacion.jsx';
+import ValidacionPos from './routes/ValidacionPos.jsx';
 import Licencia from './routes/Licencia.jsx';
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: '/postulacion',
         element: <Postulacion />,
+      },
+      {
+        path: '/validacionPos',
+        element: <ValidacionPos />,
       },
       { 
         path: '/licencias',
