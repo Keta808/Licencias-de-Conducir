@@ -72,7 +72,9 @@ async function createHora(hora) {
             if (horaFound) return [null, "La hora ya existe"];
         }
 
-        if(validarRut(rut) == false) return [null, "El rut no es valido"];
+        if(rut != null){
+            if(validarRut(rut) == false) return [null, "El rut no es valido"];
+        }
 
         const newHora = new Hora({
             rut,
@@ -180,9 +182,9 @@ async function getHorasDisponibles(rut) {
         const validacionFound = await validacionPostulacion.findOne({ rut: rut });
         if(!validacionFound) return [null, "El usuario no está aprobado"];
         if(!validacionFound.estado) return [null, "El usuario no está aprobado"];
-        if(validarRut(rut) == false) return [null, "El rut no es valido"];
+        //if(validarRut(rut) == false) return [null, "El rut no es valido"];
 
-        const horas = await Hora.find();      
+        const horas = await Hora.find({ rut: null});      
         if(!horas) return [null, "No hay horas disponibles"];
         
         return [horas, null];

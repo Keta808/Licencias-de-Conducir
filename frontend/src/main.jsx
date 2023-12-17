@@ -9,6 +9,8 @@ import Horas from './routes/Horas.jsx';
 import Postulacion from './routes/Postulacion.jsx';
 import ValidacionPos from './routes/ValidacionPos.jsx';
 import Licencia from './routes/Licencia.jsx';
+import SeleccionarHora from './routes/SeleccionarHora.jsx';
+import Register from './routes/Register.jsx';
 
 const router = createBrowserRouter([
   {
@@ -35,13 +37,24 @@ const router = createBrowserRouter([
       { 
         path: '/licencias',
         element: <Licencia />,
-      }
+      },
+      
+
     ],
+    
   },
   {
     path: '/auth',
     element: <Login />,
   },
+  {
+    path: '/SeleccionarHora',
+    element: <SeleccionarHora />,
+  },
+  {
+    path: '/Register',
+    element: <Register />,
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

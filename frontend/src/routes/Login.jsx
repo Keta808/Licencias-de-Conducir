@@ -21,9 +21,16 @@ function Login() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '150vh', marginBottom: '100px' }}>
     <div style={{ textAlign: 'center', marginBottom: '100px' }}>
+
+    <div>
+      <h1>Registrarse</h1>
+      <button onClick={() => navigate('/register')}>Registrarse</button>
+    </div>
+    
       <h2>Inicia sesión!</h2>
     </div>
     <LoginForm />
+    
   </div>
   );
 }

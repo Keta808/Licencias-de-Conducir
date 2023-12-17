@@ -21,9 +21,9 @@ function PageRoot() {
 
   const { user } = useAuth();
 
-  if(user.roles[0].name === 'admin'){
+  if (user && user.roles && user.roles.length > 0 && user.roles[0].name === 'admin') {
     return (
-      console.log(user),
+      
       <div>
         <div>
           <button onClick={() => navigate('/horas')}
@@ -52,7 +52,7 @@ function PageRoot() {
       </div>
     );
   }
-  else{
+    else if (user && user.roles && user.roles.length > 0) {
     return(    
       console.log(user.roles[0].name),
           <div>
@@ -61,17 +61,27 @@ function PageRoot() {
             >
               Home
             </button>
+
+            <button onClick = {() => navigate('/SeleccionarHora')}
+            >
+              Seleccionar Hora
+            </button>
+            
             <h1>Aqui deberia ir un header</h1>
             <p>Estas logeado como: {user.email}</p>
             <button onClick={handleLogout}>Cerrar sesion</button>
           </div>
         
     );
+  }else {
+    // Manejar el caso en que user o user.roles no están definidos
+    return <p>Error al obtener información del usuario</p>;
   }
+
+}
 
 
 
   
-}
 
 export default Root;

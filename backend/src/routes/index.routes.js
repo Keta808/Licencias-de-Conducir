@@ -7,6 +7,8 @@ const validacionPosRoutes = require("./validacionPos.routes.js");
 
 /** Enrutador de usuarios  */
 const userRoutes = require("./user.routes.js");
+const createUser = require("./createUser.routes.js");
+const obtenerRut = require("./obtenerRut.routes.js");
 
 /** Enrutador de autenticación */
 const authRoutes = require("./auth.routes.js");
@@ -26,7 +28,10 @@ const horaRoutes = require("./hora.routes.js");
 const router = express.Router();
 
 // Define las rutas para los usuarios /api/usuarios
-router.use("/users", authenticationMiddleware, userRoutes);
+router.use("/users",authenticationMiddleware, userRoutes);
+router.use("/createUser", createUser);
+router.use("/obtenerRut", obtenerRut);
+
 // Define las rutas para la autenticación /api/auth
 
 router.use("/auth", authRoutes);
@@ -46,6 +51,7 @@ router.use("/resExamen", authenticationMiddleware, resExamenRoutes);
 // Define rutas para las postulaciones
 router.use("/postulacion", postulacionRoutes);
 router.use("/validacionPos", authenticationMiddleware, validacionPosRoutes);
+router.use("/createUser", createUser);
 
 
 // define ruta para subir archivos

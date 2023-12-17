@@ -31,6 +31,9 @@ async function createUser(user) {
   try {
     const { nombre, rut, email, password, roles } = user;
 
+    const userRut = await User.findOne({ rut: user.rut });
+    if (userRut) return [null, "El rut ya existe"];
+
     const userFound = await User.findOne({ email: user.email });
     if (userFound) return [null, "El usuario ya existe"];
 
@@ -52,6 +55,9 @@ async function createUser(user) {
     handleError(error, "user.service -> createUser");
   }
 }
+
+
+
 
 /**
  * Obtiene un usuario por su id de la base de datos

@@ -49,6 +49,8 @@ async function createUser(req, res) {
   }
 }
 
+
+
 /**
  * Obtiene un usuario por su id
  * @param {Object} req - Objeto de petición
