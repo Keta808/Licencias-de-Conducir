@@ -13,8 +13,8 @@ function CrearLicenciaForm() {
         formState: { errors },
     } = useForm();
 
-    const onSubmit = async (data) => {
-        const { rut, TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = data;
+    const onSubmit = async (licenciadata) => {
+        const { rut, TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = licenciadata;
 
         const formData = new FormData();
         formData.append('TipoLicencia', TipoLicencia);
@@ -53,8 +53,16 @@ function CrearLicenciaForm() {
                         {...register('TipoLicencia', { required: true })}
                     >
                         <option value="A1">A1</option>
-                        <option value="A2">A2</option>
-                        {/* Agrega más opciones según tus necesidades */}
+                        <option value="A2">A2</option> 
+                        <option value="A3">A3</option>
+                        <option value="A4">A4</option>
+                        <option value="A5">A5</option>
+                        <option value="B">B</option> 
+                        <option value="C">C</option>
+                        <option value="D">D</option> 
+                        <option value="E">E</option> 
+                        <option value="F">F</option>
+                        
                     </select>
                     {errors.TipoLicencia && <span>El tipo de licencia es requerido</span>}
                 </div>
@@ -77,8 +85,9 @@ function CrearLicenciaForm() {
                         {...register('EstadoLicencia', { required: true })}
                     >
                         <option value="Retirada">Retirada</option>
-                        <option value="En Tramite">En Tramite</option>
-                        {/* Agrega más opciones según tus necesidades */}
+                        <option value="En Tramite">En Tramite</option> 
+                        <option value="Retirable">Retirable</option>
+                        
                     </select>
                     {errors.EstadoLicencia && <span>El estado de licencia es requerido</span>}
                 </div>

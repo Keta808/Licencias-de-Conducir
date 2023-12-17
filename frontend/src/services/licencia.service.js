@@ -16,4 +16,23 @@ export const buscarLicenciaPorRut = async (rut) => {
   } catch (error) {
     throw error;
   }
-};
+}; 
+
+export const MostrarLicencias = async () => { 
+ try{ 
+  const response = await axios.get(`/licencias/Licencias`); 
+  return response.data;
+ }catch (error) {
+  throw error;
+ }
+}; 
+
+
+export const enviarLicenciaPorRUT = async (rut) => { 
+  try{ 
+    const response = await axios.get(`/licencias/EnviarLicenciaRut/${encodeURIComponent(rut)}`); 
+    return response.data;
+  }catch (error) {
+    throw error;
+  }
+  }

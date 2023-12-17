@@ -127,7 +127,7 @@ async function updateLicenciaByRut(req, res) {
 async function deleteLicenciaByRut(req, res) {
   try {
     const { params } = req;
-    const { error: paramsError } = licenciaIdSchema.validate(params);
+    const { error: paramsError } = licenciaBodySchema.validate(params);
     if (paramsError) return respondError(req, res, 400, paramsError.message);
     const [licencia, errorLicencia] = await LicenciasServices.deleteLicenciaByRut(params.rut);
     if (errorLicencia) return respondError(req, res, 404, errorLicencia);
