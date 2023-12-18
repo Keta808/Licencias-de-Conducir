@@ -70,6 +70,7 @@ export const getValidacionPostulacion = async (id) => {
         const response = await axios.get(`/validacionPos/${id}`);
         const { status, data } = response;
         if(status === 200){
+            console.log("Datos de la validación:", data);
             return data;
         }
         return {};
@@ -93,6 +94,7 @@ export const getValidacionPostulaciones = async () => {
 
 export const createValidacionPostulacion = async (validacion) => {
     try {
+        console.log('Datos a enviar para la validación:', validacion);
         const response = await axios.post('/validacionPos', validacion);
         const { status, data } = response;
         if(status === 201){

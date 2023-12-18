@@ -42,7 +42,7 @@ function ValidacionPosForm() {
                                 id='estado'
                                 name='estado'
                                 type='boolean'
-                                {...register('rut', { required: true })}
+                                {...register('estado', { required: true })}
                             />
                             {errors.estado && <span>El estado es requerido</span>}
                     </div>
