@@ -23,13 +23,24 @@ function Licencia() {
       const response = await buscarLicenciaPorRut(rut);
       console.log("Respuesta de buscarLicenciaPorRut:", response.data);
       console.log("Estado HTTP:", response.status);
-      setLicencia(response.data || null);
-      setBusquedaRealizada(true);
-      setMostrarBusqueda(true); 
-
-
+  
+      // Mostrar la licencia buscada si la solicitud fue exitosa (código 2xx)
+      if (response.data) {
+        setLicencia(response.data || null);
+        setBusquedaRealizada(true);
+        setMostrarBusqueda(true);
+      }
     } catch (error) {
       console.error("Error al buscar licencia:", error);
+  
+      // Verificar si el error es de tipo AxiosError
+      if (error.name === 'AxiosError' && error.response && error.response.status === 404) {
+        // Mostrar alerta si no se encontró la licencia
+        alert("No se encontró licencia para el usuario con RUT " + rut);
+      } else {
+        // Mostrar alerta genérica para otros errores
+        alert("Hubo un error al buscar la licencia. Por favor, inténtelo de nuevo.");
+      }
     }
   };
   
@@ -108,11 +119,17 @@ const handleToggleResExamen = async () => {
     const response = await getExamenesAprobados();
     const examenesAprobados = response.data || [];
 
-    // Actualizar el estado con los exámenes aprobados
-    setExamenesAprobados(examenesAprobados);
+    // Verificar el estado de la respuesta
+    if (response.state === "Success") {
+      // Actualizar el estado con los exámenes aprobados
+      setExamenesAprobados(examenesAprobados);
 
-    // Toggle del estado para mostrar/ocultar
-    setMostrarResExamen((prevMostrarResExamen) => !prevMostrarResExamen);
+      // Toggle del estado para mostrar/ocultar
+      setMostrarResExamen((prevMostrarResExamen) => !prevMostrarResExamen);
+    } else {
+      // Mostrar alerta de que no hay exámenes aprobados
+      alert('No hay exámenes aprobados disponibles.');
+    }
   } catch (error) {
     console.error('Error al Obtener Resultados', error);
   }

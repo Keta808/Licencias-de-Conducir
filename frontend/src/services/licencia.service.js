@@ -16,7 +16,8 @@ export const createLicenciaPorRut = async (rut, licenciaData) => {
 export const buscarLicenciaPorRut = async (rut) => {
   try {
     const response = await axios.get(`/licencias/Buscar-Licencia/${encodeURIComponent(rut)}`);
-    return response.data;
+    return response.data; 
+   
   } catch (error) {
     throw error;
   }
