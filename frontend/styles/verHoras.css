@@ -1,0 +1,15 @@
+/* VerHoras.css */
+.ver-horas-container {
+    max-width: 600px;
+    
+  }
+  
+  .eliminar-button {
+    background-color: #dc3545;
+    margin-left: 60px;
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
