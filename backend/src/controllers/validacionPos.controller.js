@@ -24,6 +24,7 @@ async function getValidacionPos(req, res) {
 async function createValidacionPos(req, res) {
     try {
         const { body } = req;
+        console.log("Datos recibidos para crear una validación:", body);
         const { error: bodyError } = validacionPosBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
 

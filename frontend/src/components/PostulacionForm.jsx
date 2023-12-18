@@ -83,15 +83,7 @@ function PostulacionForm() {
                     {errors.tramite && <span>El trámite que desea realizar es necesario</span>}
                 </div>
 
-                <div>
-                    <label htmlFor='Archivo'>Adjuntar Archivos:</label>
-                    <input
-                        id='Archivo'
-                        name='Archivo'
-                        type='file'
-                        {...register('Archivo', { required: true })}
-                    />
-                </div>
+                
 
                 <button type="submit">Enviar</button>
             </form>

@@ -18,10 +18,10 @@ const Postulaciones = () => {
                     <tr>
                         <th>Nombre</th>
                         <th>Rut</th>
-                        <th>Edad</th>
+                        <th>edad</th>
                         <th>Direccion</th>
                         <th>Tramite</th>
-                        <th>Archivo</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -32,17 +32,9 @@ const Postulaciones = () => {
                             <td>{postulacion.edad}</td>
                             <td>{postulacion.direccion}</td>
                             <td>{postulacion.tramite}</td>
-                            <td>
-                                {postulacion.archivo ? (
-                                    <a href={postulacion.archivo} target="_blank" rel="noopener noreferrer">
-                                        Ver Archivo
-                                    </a>
-                                ) : (
-                                    'No hay archivo'
-                                )}
-                            </td>
+                            
                         </tr>
-
+                            
                     ))}
                 </tbody>
             </table>

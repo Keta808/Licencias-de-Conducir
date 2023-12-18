@@ -7,7 +7,6 @@ function postulacion() {
   return (
     <div>
       <PostulacionForm />
-      <Postulaciones />
     </div>
     
   );
