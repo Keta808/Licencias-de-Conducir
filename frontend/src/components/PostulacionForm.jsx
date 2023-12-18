@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 // import { createPostulaciones } from '../services/postulacion.service';
 import "../../styles/postulacion.css"
-import { createPostulacion, subirArchivo } from '../services/postulacion.service';
+import { createPostulacion } from '../services/postulacion.service';
 
 function PostulacionForm() {
     const navigate = useNavigate();
@@ -20,11 +20,7 @@ function PostulacionForm() {
         }).catch((error) => {
             console.error("Error al crear postulacion", error);
         });
-        subirArchivo(data).then(() => {
-            navigate('/');
-        }).catch((error) => {
-            console.error("Error al subir archivo", error);
-        });
+        
 
     }
 

@@ -42,7 +42,7 @@ const Postulaciones = () => {
                                 )}
                             </td>
                         </tr>
-                            
+
                     ))}
                 </tbody>
             </table>

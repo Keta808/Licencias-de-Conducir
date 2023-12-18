@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 // import "../../styles/validacionPos.css"
-import { createValidacionPos } from '../services/postulacion.service';
+import { createValidacionPostulacion } from '../services/postulacion.service';
 
 function ValidacionPosForm() {
     const navigate = useNavigate();
@@ -13,7 +13,7 @@ function ValidacionPosForm() {
     } = useForm();
 
     const onSubmit = (data) => {
-        createValidacionPos(data).then(() => {
+        createValidacionPostulacion(data).then(() => {
             navigate('/');
         }).catch((error) => {
             console.error("Error al crear validacion", error);
