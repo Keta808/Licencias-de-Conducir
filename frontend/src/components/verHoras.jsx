@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { verHoras, liberarHora } from '../services/horas.service';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/VerHoras.css';
+import '../../styles/verHoras.css';
 const formatearNumero = (numero) => {
   return numero.toString().padStart(2, '0');
 };
