@@ -36,11 +36,11 @@ async function createHora(req,res){
     try {
         const { body } = req;
 
+       
       const { error: bodyError } = horaBodySchema.validate(body);
-      if (bodyError) return respondError(req, res, 400, bodyError.message);
-
+    
+      if (bodyError) return respondError(req, res, 400, bodyError.message);    
         const [newHora, horaError] = await HoraService.createHora(body);
-
         if (horaError) return respondError(req, res, 400, horaError);
         if (!newHora) {
             return respondError(req, res, 400, "No se creo la hora");
@@ -139,7 +139,6 @@ async function getHorasDisponibles(req,res){
     try {
 
         const {rut} =req.params;
-        console.log(rut);
         const [horas, errorHoras] = await HoraService.getHorasDisponibles(rut);
         if (errorHoras) return respondError(req, res, 404, errorHoras);
 
@@ -172,6 +171,40 @@ async function elegirHora(req,res){
     }
 }
 
+async function verHoras(req, res) {
+    try {
+        const { rut } = req.params;
+        const [horas, errorHoras] = await HoraService.verHoras(rut);
+
+        if (errorHoras) {
+            return respondError(req, res, 400, errorHoras);
+        }
+
+        horas.length === 0
+            ? respondSuccess(req, res, 204)
+            : respondSuccess(req, res, 200, horas);
+    } catch (error) {
+        handleError(error, "hora.controller -> verHoras");
+        respondError(req, res, 500, "Error interno del servidor");
+    }
+}
+
+async function liberarHora(req, res) {
+    try {
+        const { params } = req;
+        const { error: paramsError } = horaIdSchema.validate(params);
+        if (paramsError) return respondError(req, res, 400, paramsError.message);
+
+        const [horaLiberada, errorLiberar] = await HoraService.liberarHora(params.id);
+        if (errorLiberar) return respondError(req, res, 400, errorLiberar);
+
+        respondSuccess(req, res, 200, horaLiberada);
+    } catch (error) {
+        handleError(error, "hora.controller -> liberarHora");
+        respondError(req, res, 500, "Error interno del servidor");
+    }
+}
+
 /**
  * Exporta funciones para ser utilizadas en routes/hora.routes.js
  */
@@ -182,5 +215,7 @@ module.exports = {
     updateHora,
     getHorasDisponibles,
     elegirHora,
-    deleteHora
+    deleteHora,
+    verHoras,
+    liberarHora
 };

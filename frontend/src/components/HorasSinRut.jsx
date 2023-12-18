@@ -1,44 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import { getHoras } from '../services/horas.service';
+import { getHoras, eliminarHora } from '../services/horas.service';
 import '../../styles/horas.css';
 
 const formatearNumero = (numero) => {
-  // Asegura que el número siempre tenga dos dígitos
   return numero.toString().padStart(2, '0');
 };
 
-const HorasSinRut = () => {
-  const [horasSinRut, setHorasSinRut] = useState([]); // Cambiado el nombre del estado a horasSinRut
+const HorasConRut = () => {
+  const [horas, setHoras] = useState([]);
+  const [horaEliminando, setHoraEliminando] = useState(null);
 
   useEffect(() => {
     getHoras().then((res) => {
-      setHorasSinRut(res.data); // Cambiado el nombre del estado a horasSinRut
+      setHoras(res.data);
     });
   }, []);
 
-  // Filtra las horas sin RUT
-  const horasSinRutFiltradas = horasSinRut.filter((hora) => hora.rut === null);
+  // Filtra las horas con RUT
+  const horasConRutFiltradas = horas.filter((hora) => hora.rut === null);
+
+  const handleEliminarHora = (id) => {
+    setHoraEliminando(id);
+  };
+
+  const handleConfirmarEliminacion = async (id) => {
+    try {
+      await eliminarHora(id);
+      // Actualizar el estado después de eliminar la hora
+      const nuevasHoras = horas.filter((hora) => hora._id !== id);
+      setHoras(nuevasHoras);
+      setHoraEliminando(null);
+    } catch (error) {
+      console.error('Error al eliminar la hora:', error);
+      setHoraEliminando(null);
+    }
+  };
+
+  const handleCancelarEliminacion = () => {
+    setHoraEliminando(null);
+  };
 
   return (
     <div>
+      <h1>Horas Disponibles</h1>
       <table className="table">
         <thead>
           <tr>
-            <th>RUT</th>
+            
             <th>Fecha</th>
             <th>Disponibilidad</th>
             <th>Tipo</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {horasSinRutFiltradas.map((hora) => (
+          {horasConRutFiltradas.map((hora) => (
             <tr key={hora._id}>
-              <td>{hora.rut}</td>
-              <td>{`${hora.fecha.year}/${hora.fecha.mes}/${hora.fecha.dia} ${hora.fecha.hora}:${formatearNumero(
+            
+              <td>{`${hora.fecha.dia}/${hora.fecha.mes}/${hora.fecha.year} ${hora.fecha.hora}:${formatearNumero(
                 hora.fecha.minuto
               )}`}</td>
               <td>{hora.disponibilidad ? 'Disponible' : 'No disponible'}</td>
               <td>{hora.tipo}</td>
+              <td>
+                {hora._id === horaEliminando ? (
+                  <>
+                    <button onClick={() => handleConfirmarEliminacion(hora._id)}>Confirmar Eliminación</button>
+                    <button onClick={handleCancelarEliminacion}>Cancelar</button>
+                  </>
+                ) : (
+                  <button onClick={() => handleEliminarHora(hora._id)}>Eliminar</button>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -47,4 +80,4 @@ const HorasSinRut = () => {
   );
 };
 
-export default HorasSinRut;
+export default HorasConRut;

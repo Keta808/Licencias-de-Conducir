@@ -65,6 +65,7 @@ function validarRut(rut) {
 
 async function createHora(hora) {
     try {
+        console.log(hora);
         const { rut, fecha, disponibilidad, tipo } = hora;
 
         if(hora.rut != null){
@@ -228,11 +229,45 @@ async function elegirHora(id, rut){
         handleError(error, "hora.service -> elegirHora");
     }
 }
+async function verHoras(rut) {
+    try {
+        const horas = await Hora.find({ rut }).exec();
+
+        if (!horas) return [null, "No hay horas disponibles"];
+
+        return [horas, null];
+    } catch (error) {
+        handleError(error, "hora.service -> verHoras");
+        return [null, "Error al obtener las horas"];
+    }
+}
 
 
 /**
 * Exporta las funciones del servicio 
 */
+async function liberarHora(id) {
+    try {
+        // Verificar si la hora con la ID proporcionada existe
+        const [hora, errorHora] = await getHorabyId(id);
+        if (errorHora) return [null, errorHora];
+
+        // Verificar si la hora ya está asignada a un usuario
+        if (!hora.rut || hora.disponibilidad) {
+            return [null, "La hora no está asignada o ya está disponible. No se puede liberar."];
+        }
+
+        // Liberar la hora estableciendo rut a null y disponibilidad a true
+        const [horaLiberada, errorLiberar] = await updateHora(id, { rut: null, disponibilidad: true });
+        if (errorLiberar) return [null, errorLiberar];
+
+        return [horaLiberada, null];
+    } catch (error) {
+        handleError(error, "hora.service -> liberarHora");
+        return [null, "Error interno del servidor"];
+    }
+}
+
 
 module.exports = {
     getHoras,
@@ -241,7 +276,9 @@ module.exports = {
     updateHora,
     getHorasDisponibles,
     elegirHora,
-    deleteHora
+    deleteHora,
+    verHoras, 
+    liberarHora
 };
 
 

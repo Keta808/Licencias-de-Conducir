@@ -9,30 +9,36 @@ function HorasForm() {
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-
   const onSubmit = (data) => {
-    // Establece disponibilidad como true y agrega otros campos del formulario
+    // Estructura el objeto horaData según el formato requerido
     const horaData = {
-      ...data,
-      disponibilidad: true,
+      fecha: {
+        year: data.year,
+        mes: data.mes,
+        dia: data.dia,
+        hora: data.hora,
+        minuto: data.minuto,
+      },
+      disponibilidad: true, // Por defecto, establecido como true
+      tipo: data.tipo,
     };
 
     createHora(horaData)
-    .then((response) => {
-    console.log('Hora creada:', horaData);
-      const hora = horaData; // Asegúrate de acceder a la propiedad correcta según tu API
-      
-      setHoraCreada(hora);
-      navigate('/horas');
-    })
-    .catch((error) => {
-      console.error('Error al crear la hora:', error);
-    });
+      .then((response) => {
+        console.log('Hora creada:', horaData);
+        const hora = horaData; // Asegúrate de acceder a la propiedad correcta según tu API
+
+        setHoraCreada(hora);
+        navigate('/horas');
+      })
+      .catch((error) => {
+        console.error('Error al crear la hora:', error);
+      });
   };
 
   return (
     <div>
-    <br></br>
+      <br></br>
       <form onSubmit={handleSubmit(onSubmit)} className="form-container">
         <div>
           <label>Año:</label>
