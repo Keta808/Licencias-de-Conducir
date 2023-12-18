@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 // import { createPostulaciones } from '../services/postulacion.service';
 import "../../styles/postulacion.css"
+import { createPostulacion } from '../services/postulacion.service';
 
 function PostulacionForm() {
     const navigate = useNavigate();
@@ -13,11 +14,14 @@ function PostulacionForm() {
     } = useForm();
 
     const onSubmit = (data) => {
-        createPostulaciones(data).then(() => {
+        console.log('Ingresando a onSubmit. Datos:', data);
+        createPostulacion(data).then(() => {
             navigate('/');
         }).catch((error) => {
             console.error("Error al crear postulacion", error);
         });
+        
+
     }
 
     return (
@@ -47,14 +51,14 @@ function PostulacionForm() {
                 </div>
 
                 <div>
-                    <label htmlFor="fecha_nacimiento">Fecha de Nacimiento:</label>
+                    <label htmlFor="edad">Edad:</label>
                     <input
-                        id="fecha_nacimiento"
-                        name="fecha_nacimiento"
-                        type="date"
-                        {...register('fecha_nacimiento', { required: true })}
+                        id="edad"
+                        name="edad"
+                        type="text"
+                        {...register('edad', { required: true })}
                     />
-                    {errors.fecha_nacimiento && <span>La fecha de nacimiento es requerida</span>}
+                    {errors.fecha_nacimiento && <span>La edad es requerida</span>}
                 </div>
 
                 <div>

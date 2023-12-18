@@ -27,6 +27,7 @@ async function getPostulaciones(req, res) {
 */
 async function createPostulaciones(req, res) {
     try {
+        // console.log("Datos recibidos para crear una postulación:", req.body);
         const { body } = req;
         const { error: bodyError } = postulacionBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
