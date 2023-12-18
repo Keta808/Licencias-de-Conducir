@@ -18,22 +18,7 @@ form {
     font-weight: bold;
   }
   
-  /* Estilo de los campos de entrada */
-  input,
-  select,
-  button {
-    margin-bottom: 16px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  /* Estilo del botón de envío */
-  button {
-    background-color: #036efa;
-    color: #fff;
-    cursor: pointer;
-  }
+ 
   
   /* Estilo para los mensajes de error */
   span {

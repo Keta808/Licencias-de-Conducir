@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useForm } from 'react-hook-form';
 import { createLicenciaPorRut } from '../services/licencia.service';
-// import "../../styles/licencia.css"; // Asegúrate de tener el archivo CSS adecuado
+import "../../styles/licencia.css"; // Asegúrate de tener el archivo CSS adecuado
 
 function CrearLicenciaForm() {
    
