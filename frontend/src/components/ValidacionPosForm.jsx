@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 // import "../../styles/validacionPos.css"
+import { createValidacionPos } from '../services/postulacion.service';
 
 function ValidacionPosForm() {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ function ValidacionPosForm() {
 
     return (
         <div>
+            <h1>Ingresar Validacion</h1>
             <div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div>
