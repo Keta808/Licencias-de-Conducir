@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { verHoras } from '../services/horas.service';
-
+import { verHoras, liberarHora } from '../services/horas.service';
+import { useNavigate } from 'react-router-dom';
+import '../../styles/VerHoras.css';
 const formatearNumero = (numero) => {
   return numero.toString().padStart(2, '0');
 };
 
 const VerHoras = () => {
+  const navigate = useNavigate();
   const [horas, setHoras] = useState([]);
   const [error, setError] = useState(null);
 
@@ -20,7 +22,7 @@ const VerHoras = () => {
         }
 
         const data = await verHoras(email);
-        if(!data){
+        if (!data) {
           return [];
         }
         setHoras(data.data);
@@ -32,9 +34,23 @@ const VerHoras = () => {
     obtenerHoras();
   }, []);
 
-  const handleEliminarHora = (id) => {
-    // Aquí irá la lógica para confirmar y eliminar la hora
-    console.log(`Eliminar hora con ID ${id}`);
+  const handleEliminarHora = async (id) => {
+    try {
+      // Realiza la liberación de la hora en el backend
+      const response = await liberarHora(id);
+
+      if (response) {
+        // Actualiza el estado local eliminando la hora con el ID correspondiente
+        setHoras((prevHoras) => prevHoras.filter((hora) => hora._id !== id));
+
+        console.log(`Hora con ID ${id} eliminada correctamente`);
+        // Redirige a la página después de la eliminación
+        window.location.reload();
+        navigate('/SeleccionarHora');
+      }
+    } catch (error) {
+      console.error('Error al eliminar la hora:', error.message);
+    }
   };
 
   const confirmarEliminarHora = (id) => {
@@ -47,9 +63,9 @@ const VerHoras = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
-  
+
   return (
-    <div>
+    <div className="ver-horas-container">
       <h1>Mis Horas </h1>
       <ul>
         {Array.isArray(horas) && horas.length > 0 ? (
@@ -59,7 +75,9 @@ const VerHoras = () => {
                 {`${hora.fecha.dia}/${hora.fecha.mes}/${hora.fecha.year} ${hora.fecha.hora}:${formatearNumero(
                   hora.fecha.minuto
                 )}, Tipo: ${hora.tipo}`}
-                <button onClick={() => confirmarEliminarHora(hora._id)}>Eliminar Hora</button>
+                <button className="eliminar-button" onClick={() => confirmarEliminarHora(hora._id)}>
+                  Eliminar Hora
+                </button>
               </li>
             </h2>
           ))
@@ -69,7 +87,6 @@ const VerHoras = () => {
       </ul>
     </div>
   );
-  
 };
 
 export default VerHoras;

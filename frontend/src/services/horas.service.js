@@ -170,3 +170,26 @@ export const getHorasDisponibles = async () => {
       throw new Error(error.message);
     }
   };
+
+  export const liberarHora = async (id) => {
+    try {
+      
+      const [hora, errorHora] = await getHorabyId(id);
+      if (errorHora) return [null, errorHora];
+  
+      
+  
+     
+      const response = await axios.put(`/horas/liberar/${id}`, { rut: null, disponibilidad: true });
+  
+      if (response.status === 200) {
+        return [response.data, null];
+      } else {
+        console.error(`Error al liberar la hora: ${response.status}`, response.data);
+        return [null, `Error al liberar la hora: ${response.status}`];
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      return [null, 'Error interno del servidor'];
+    }
+  };

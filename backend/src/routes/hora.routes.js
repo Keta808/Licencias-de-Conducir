@@ -43,9 +43,7 @@ router.get("/ver/:rut", horaController.verHoras);
 // put para asignar una hora a un usuario mediante el rut de la sesion
 router.put("/asignar/:id", horaController.elegirHora);
 
-router.put("/liberar/:id",
-    horaController.liberarHora
-);
+router.put("/liberar/:id", horaController.liberarHora);
 module.exports = router;
 
 

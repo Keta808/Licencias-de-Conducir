@@ -27,8 +27,19 @@ const HorasDisponibles = () => {
       }
   
       try {   
-  
         const [horaSelected, error] = await elegirHora(horaId, email);
+        window.location.reload();
+        navigate('/SeleccionarHora');
+       
+        
+        if (horaSelected) {
+          // Actualiza el estado local después de la selección de hora
+          setHoras((prevHoras) => {
+            return prevHoras.map((hora) =>
+              hora._id === horaId ? { ...hora, disponibilidad: false } : hora
+            );
+          });
+        }
       } catch (error) {
         console.error('Error:', error);
       }
