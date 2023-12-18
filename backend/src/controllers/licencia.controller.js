@@ -160,38 +160,38 @@ async function enviarLicenciaPorRUT(req, res) {
 
 async function createLicenciaPorRut(req, res) {
   try {
-    const { params } = req;
-    const { rut } = params; // Obten el RUT desde los parámetros
-    const { body } = req; // Datos de la licencia desde el cuerpo de la solicitud
-    const { TipoLicencia, FechaRetiro, EstadoLicencia } = body;
-    const pdfDocumento = req.file.buffer; 
-    // Obten el contenido del archivo PDF
+      const { params } = req;
+      const { rut } = params;
+      const { body, file } = req; // Datos de la licencia desde el cuerpo de la solicitud
+      const { TipoLicencia, FechaRetiro, EstadoLicencia } = body;
+      const pdfDocumento = file ? file.buffer : null;
 
-    // Aquí deberías validar los datos y asegurarte de que el RUT sea válido 
-    const userFound = await User.findOne({ rut: rut }); 
-    if (!userFound) return [null, "El usuario no existe"];
-    // Luego, crea la licencia y asocia el PDF al usuario identificado por el RUT
-    const [newLicencia, errorLicencia] = await LicenciasServices.createLicenciaPorRut(rut, {
-      TipoLicencia,
-      FechaRetiro,
-      EstadoLicencia,
-      pdfDocumento,
-    });
+      const userFound = await User.findOne({ rut: rut });
+      if (!userFound) return respondError(req, res, 404, "El usuario no existe"); 
+    
 
-    if (errorLicencia) {
-      return respondError(req, res, 400, errorLicencia);
-    }
+      const [newLicencia, errorLicencia] = await LicenciasServices.createLicenciaPorRut(rut, {
+          TipoLicencia,
+          FechaRetiro,
+          EstadoLicencia,
+          pdfDocumento,
+      });
 
-    if (!newLicencia) {
-      return respondError(req, res, 400, "No se creó la licencia");
-    }
+      if (errorLicencia) {
+          return respondError(req, res, 400, errorLicencia);
+      }
 
-    respondSuccess(req, res, 201, newLicencia);
+      if (!newLicencia) {
+          return respondError(req, res, 400, "No se creó la licencia");
+      }
+
+      respondSuccess(req, res, 201, newLicencia);
   } catch (error) {
-    handleError(error, "licencia.controller -> createLicenciaPorRut");
-    respondError(req, res, 500, "No se creó la licencia");
+      handleError(error, "licencia.controller -> createLicenciaPorRut");
+      respondError(req, res, 500, "No se creó la licencia");
   }
 }
+
 
 module.exports = {
   createLicencia,

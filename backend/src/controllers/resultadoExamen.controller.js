@@ -6,7 +6,7 @@
 const ResExamenServices = require("../services/ResExamen.service.js"); 
 const { respondSuccess, respondError } = require("../utils/resHandler"); 
 const { handleError } = require("../utils/errorHandler");
-const { resExamenBodySchema, resExamenIdSchema } = require("../schema/ResExamen.schema.js");  
+const { ResExamenBodySchema } = require("../schema/ResExamen.schema.js");  
 require("dotenv").config();
 const multer = require("multer");
 const storage = multer.memoryStorage(); // Almacena el archivo en memoria
@@ -22,7 +22,7 @@ const User = require("../models/user.model.js");
 async function createResExamen(req, res) {
     try {
         const { body } = req;
-        const { error: bodyError } = resExamenBodySchema.validate(body);
+        const { error: bodyError } = ResExamenBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
         const [newResExamen, resExamenError] = await ResExamenServices.createResExamen(body);
         if (resExamenError) return respondError(req, res, 400, resExamenError);
@@ -40,14 +40,15 @@ async function createResExamenPorRut(req, res) {
     const { params } = req;
     const { rut } = params; // Obten el RUT desde los parámetros
     const { body } = req; // Datos de la licencia desde el cuerpo de la solicitud
-    const { fechaDocumento } = body;
+    const { fechaDocumento, estadoExamen } = body;
     const pdfDocumento = req.file.buffer; 
     // Obten el contenido del archivo PDF
     const userFound = await User.findOne({ rut: rut }); 
     if (!userFound) return [null, "El usuario no existe"]; 
 
-    const [newResExamen, errorResExamen]= await ResExamenServices.createResExamenPorRut(rut, {
-        fechaDocumento,
+    const [newResExamen, errorResExamen]= await ResExamenServices.createResExamenPorRut(rut, { 
+        fechaDocumento, 
+        estadoExamen,
         pdfDocumento,
       }); 
      if (errorResExamen) return respondError(req, res, 400, errorResExamen);  
@@ -90,7 +91,7 @@ async function getResExamenes(req, res) {
 async function getResExamenByRut(req, res) {
     try {
         const { params } = req;
-        const { error: paramsError } = resExamenIdSchema.validate(params);
+        const { error: paramsError } = ResExamenBodySchema.validate(params);
         if (paramsError) return respondError(req, res, 400, paramsError.message);
         const [resExamen, errorResExamen] = await ResExamenServices.getResExamenByRut(params.rut);
         if (errorResExamen) return respondError(req, res, 404, errorResExamen);
@@ -101,6 +102,20 @@ async function getResExamenByRut(req, res) {
     }
 };  
 
+async function getResExamenesAprobados(req, res) {
+    try {
+        const [resExamenes, errorResExamenes] = await ResExamenServices.getResExamenesAprobados();
+        if (errorResExamenes) {
+            return respondError(req, res, 404, errorResExamenes);
+        }
+        resExamenes.length === 0
+            ? respondSuccess(req, res, 204)
+            : respondSuccess(req, res, 200, resExamenes);
+    } catch (error) {
+        handleError(error, "resultadoExamen.controller -> getResExamenes");
+        respondError(req, res, 400, error.message);
+    }
+};
 /**
  * Updates a resultado de examen by RUT.
  * @param {Object} req - The request object.
@@ -110,7 +125,7 @@ async function getResExamenByRut(req, res) {
 async function updateResExamenByRut(req, res) {
     try {
         const { params, body } = req;
-        const { error: paramsError } = resExamenIdSchema.validate(params);
+        const { error: paramsError } = ResExamenBodySchema.validate(params);
         if (paramsError) return respondError(req, res, 400, paramsError.message);
         const { error: bodyError } = resExamenBodySchema.validate(body);
         if (bodyError) return respondError(req, res, 400, bodyError.message);
@@ -137,7 +152,7 @@ async function updateResExamenByRut(req, res) {
 async function deleteResExamenByRut(req, res) {
     try { 
         const { params } = req; 
-        const { error: paramsError } = resExamenIdSchema.validate(params); 
+        const { error: paramsError } = ResExamenBodySchema.validate(params); 
         if (paramsError) return respondError(req, res, 400, paramsError.message);
         const [deletedExamen, errorDeletedExamen] = await ResExamenServices.deleteResExamenByRut(
                 params.rut,
@@ -174,7 +189,7 @@ module.exports = {
     getResExamenByRut,
     updateResExamenByRut,
     deleteResExamenByRut,
- 
+    getResExamenesAprobados,
     enviarExamenPorRUT, 
     createResExamenPorRut,
 

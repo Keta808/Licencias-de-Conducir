@@ -28,7 +28,7 @@ const horaRoutes = require("./hora.routes.js");
 const router = express.Router();
 
 // Define las rutas para los usuarios /api/usuarios
-router.use("/users",authenticationMiddleware, userRoutes);
+router.use("/users", authenticationMiddleware, userRoutes);
 router.use("/createUser", createUser);
 router.use("/obtenerRut", obtenerRut);
 

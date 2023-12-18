@@ -35,7 +35,7 @@ router.get("/ResExamenes", ResExamenController.getResExamenes); // Obtiene todos
 router.get("/Buscar-ResExamen/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.getResExamenByRut); // Obtiene un resultado de examen por su id de resultado de examen 
 router.put("/Actualizar/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.updateResExamenByRut); 
 router.delete("/Eliminar/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.deleteResExamenByRut); 
-
+router.get("/resExamenesAprobados", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.getResExamenesAprobados);
 router.get("/EnviarResExamen/:rut", authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, ResExamenController.enviarExamenPorRUT);
 
 // authorizationMiddleware.isAdmin, authorizationMiddleware.isFuncionario, 

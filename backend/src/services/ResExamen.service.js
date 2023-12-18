@@ -49,12 +49,13 @@ async function createResExamen(ResExamenData) {
 
 async function createResExamenPorRut(rut, ResExamenData) {
  try { 
-   const { fechaDocumento, pdfDocumento } = ResExamenData; 
+   const { fechaDocumento, estadoExamen, pdfDocumento } = ResExamenData; 
    const ResExamenFound = await ResExamen.findOne({ rut: rut }); 
    if (ResExamenFound) return [null, "El resultado de examen ya existe"]; 
     const newResExamen = new ResExamen({
         rut,
-        fechaDocumento,
+        fechaDocumento, 
+        estadoExamen,
         pdfDocumento: {
             data: pdfDocumento,
             contentType: "application/pdf", // Tipo de contenido para archivos PDF
@@ -92,6 +93,28 @@ async function getResExamenes() {
     handleError(error, "ResExamen.service -> getResExamenes");
   }
 }
+
+async function getResExamenesAprobados() {
+  try {
+    const resExamenesAprobados = await ResExamen.find({ estadoExamen: "Aprobado" }).lean().exec();
+
+    if (!resExamenesAprobados.length) {
+      return [null, "No hay resultados de exámenes aprobados disponibles"];
+    }
+    // Iterar sobre los resultados de exámenes aprobados y verificar si contienen el campo pdfDocumento
+    resExamenesAprobados.forEach((resExamen) => {
+      if (resExamen.pdfDocumento) {
+        // Transformar el buffer del documento a base64 para que sea más amigable para la API
+        resExamen.pdfDocumento = resExamen.pdfDocumento.toString("base64");
+      }
+    });
+
+    return [resExamenesAprobados, null];
+  } catch (error) {
+    handleError(error, "ResExamen.service -> getResExamenesAprobados");
+  }
+}
+
 
 /**
  * Retrieves a ResExamen document from the database by RUT.
@@ -229,6 +252,7 @@ module.exports = {
     updateResExamenByRut, 
     deleteResExamenByRut, 
     enviarExamenPorRUT, 
-    createResExamenPorRut, 
+    createResExamenPorRut,  
+    getResExamenesAprobados,
 };
 

@@ -1,8 +1,13 @@
 import React from "react"; 
-import {useState, useEffect} from 'react';   
+import {useState} from 'react';   
 import CrearLicenciaForm from '../components/CrearLicenciaForm';
+
 const Title = <h1> Generar Licencias </h1> 
-import { buscarLicenciaPorRut, MostrarLicencias, enviarLicenciaPorRUT } from '../services/licencia.service';
+import { buscarLicenciaPorRut, MostrarLicencias, enviarLicenciaPorRUT, EliminarLicenciaPorRut } from '../services/licencia.service'; 
+import { getExamenesAprobados } from '../services/ResExamen.services';
+
+import ResExamen from '../components/ResExamen' ;
+
 
 function Licencia() { 
   const [rut, setRut] = useState("");
@@ -10,8 +15,9 @@ function Licencia() {
   const [licencias, setLicencias] = useState([]);
   const [mostrarBusqueda, setMostrarBusqueda] = useState(false); 
   const [busquedaRealizada, setBusquedaRealizada] = useState(false);
-  
-  
+  const [examenesAprobados, setExamenesAprobados] = useState([]);
+  const [mostrarResExamen, setMostrarResExamen] = useState(false); 
+
   const handleSearch = async () => {
     try {
       const response = await buscarLicenciaPorRut(rut);
@@ -19,7 +25,8 @@ function Licencia() {
       console.log("Estado HTTP:", response.status);
       setLicencia(response.data || null);
       setBusquedaRealizada(true);
-      setMostrarBusqueda(true);
+      setMostrarBusqueda(true); 
+
 
     } catch (error) {
       console.error("Error al buscar licencia:", error);
@@ -27,16 +34,21 @@ function Licencia() {
   };
   
 
+
   const handleToggleBusqueda = () => {
     setMostrarBusqueda((prevMostrarBusqueda) => !prevMostrarBusqueda);
-    // También podríamos resetear busquedaRealizada si deseas que el mensaje aparezca solo después de cada búsqueda
-     setBusquedaRealizada(false);
+    setMostrarFormulario(false);
+    setBusquedaRealizada(false);
   }; 
 
-const [mostrarFormulario, setMostrarFormulario] = useState(false);
-const handleToggleForm = () => {
-   setMostrarFormulario((prevMostrarFormulario) => !prevMostrarFormulario);
-};  
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+
+  const handleToggleForm = () => {
+    setMostrarFormulario((prevMostrarFormulario) => !prevMostrarFormulario);
+    setMostrarBusqueda(false);
+    setBusquedaRealizada(false);
+  };
+
 
 const handleMostrarTodasLasLicencias = async () => {
   try {
@@ -61,7 +73,51 @@ const handleEnviarLicenciaPorCorreo = async (rut) => {
   } catch (error) {
     console.error("Error al enviar la licencia por correo:", error);
   }
+}; 
+
+const handleEliminarLicenciaPorRut = async (rut) => {
+  // Mostrar aviso de confirmación
+  const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta licencia?");
+
+  if (!confirmacion) {
+    // El usuario canceló la eliminación
+    return;
+  }
+
+  try {
+    // Eliminar la licencia
+    const response = await EliminarLicenciaPorRut(rut);
+    console.log("Respuesta de EliminarLicenciaPorRut:", response.data);
+    console.log("Estado HTTP:", response.status);
+
+    // Actualizar la lista después de la eliminación
+    await handleMostrarTodasLasLicencias();
+
+    alert("Licencia eliminada correctamente");
+  } catch (error) {
+    console.error("Error al eliminar la licencia:", error);
+  }
+}; 
+
+
+ 
+
+const handleToggleResExamen = async () => {
+  try {
+    // Lógica para obtener los exámenes aprobados
+    const response = await getExamenesAprobados();
+    const examenesAprobados = response.data || [];
+
+    // Actualizar el estado con los exámenes aprobados
+    setExamenesAprobados(examenesAprobados);
+
+    // Toggle del estado para mostrar/ocultar
+    setMostrarResExamen((prevMostrarResExamen) => !prevMostrarResExamen);
+  } catch (error) {
+    console.error('Error al Obtener Resultados', error);
+  }
 };
+ 
   return (
     <div>
       {Title}
@@ -70,13 +126,15 @@ const handleEnviarLicenciaPorCorreo = async (rut) => {
         <button onClick={handleToggleBusqueda}>
           {mostrarBusqueda ? "Ocultar Licencia" : "Ver Licencia"}  
         </button>  
-        
-        <button onClick={handleToggleForm}>
-      {mostrarFormulario ? "Ocultar Formulario" : "Crear Licencia"} 
+      {mostrarBusqueda && !mostrarFormulario && (
+      <button onClick={handleMostrarTodasLasLicencias}>Mostrar Todas las Licencias</button>)} 
+      <button onClick={handleToggleForm}>
+      {mostrarFormulario ? "Ocultar Formulario" : "Crear Licencia"}  
+      </button>   
+      <button onClick={handleToggleResExamen}>
+      {mostrarResExamen ? "Ocultar Resultados" : "Ver Resultados Examenes"}  
       </button>  
-   {mostrarBusqueda && (
-          <button onClick={handleMostrarTodasLasLicencias}>Mostrar Todas las Licencias</button>
-        )}
+      {mostrarResExamen && <ResExamen examenesAprobados={examenesAprobados} />}
       </div>
 
       {mostrarBusqueda && (
@@ -95,11 +153,15 @@ const handleEnviarLicenciaPorCorreo = async (rut) => {
     <h2>Datos de la licencia:</h2>
     <p>Rut: {licencia['rut']}</p>
     <p>Tipo de Licencia: {licencia['TipoLicencia']}</p>
-    <p>Fecha de Retiro: {licencia['FechaRetiro']}</p>
+    {/* Formatear la fecha antes de mostrarla */}
+    <p>Fecha de Retiro: {new Date(licencia['FechaRetiro']).toLocaleDateString('es-CL')}</p>
     <p>Estado de Licencia: {licencia['EstadoLicencia']}</p>
     <button onClick={() => handleEnviarLicenciaPorCorreo(rut)}>
     Enviar Por Correo
-    </button>
+    </button> 
+    <button onClick={() => handleEliminarLicenciaPorRut(rut)}>
+    Eliminar Licencia
+    </button> 
   </div>
 ) : ( 
   <>
@@ -111,11 +173,15 @@ const handleEnviarLicenciaPorCorreo = async (rut) => {
           <li key={lic._id}>
             <p>Rut: {lic.rut}</p>
             <p>Tipo de Licencia: {lic.TipoLicencia}</p>
-            <p>Fecha de Retiro: {lic.FechaRetiro}</p>
+            {/* Formatear la fecha antes de mostrarla */}
+            <p>Fecha de Retiro: {new Date(lic.FechaRetiro).toLocaleDateString('es-CL')}</p>
             <p>Estado de Licencia: {lic.EstadoLicencia}</p> 
           <button onClick={() => handleEnviarLicenciaPorCorreo(lic.rut)}>
           Enviar Por Correo
-          </button>
+          </button> 
+          <button onClick={() => handleEliminarLicenciaPorRut(lic.rut)}>
+    Eliminar Licencia
+    </button> 
           </li>
         ))}
       </ul>
@@ -128,7 +194,7 @@ const handleEnviarLicenciaPorCorreo = async (rut) => {
     </div>
       )} 
       {mostrarFormulario && <CrearLicenciaForm />}
-    </div>
+    </div> 
   );
 }   
 

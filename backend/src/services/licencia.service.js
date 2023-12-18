@@ -48,33 +48,31 @@ async function createLicencia(licenciaData) {
 // Crear licencia por rut 
 async function createLicenciaPorRut(rut, licenciaData) {
   try {
-    const { TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = licenciaData;
+      const { TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = licenciaData;
 
-    // Asegúrate de que el RUT sea válido y no esté duplicado
+      // Asegúrate de que el RUT sea válido y no esté duplicado
+      const LicenciaFound = await Licencia.findOne({ rut: rut });
+      if (LicenciaFound) {
+          return [null, "La Licencia ya existe"];
+      }
 
-    const LicenciaFound = await Licencia.findOne({ rut: rut });
-    if (LicenciaFound) {
-      return [null, "La Licencia ya existe"];
-    }
+      const newLicencia = new Licencia({
+          rut,
+          TipoLicencia,
+          FechaRetiro: FechaRetiro ? new Date(FechaRetiro) : null,
+          EstadoLicencia,
+          pdfDocumento: {
+              data: pdfDocumento,
+              contentType: "application/pdf", // Tipo de contenido para archivos PDF
+          },
+      });
 
-    const newLicencia = new Licencia({
-      rut,
-      TipoLicencia,
-      FechaRetiro,
-      EstadoLicencia,
-      pdfDocumento: {
-        data: pdfDocumento,
-        contentType: "application/pdf", // Tipo de contenido para archivos PDF
-      },
-    });
-
-    await newLicencia.save();
-    return [newLicencia, null];
+      await newLicencia.save();
+      return [newLicencia, null];
   } catch (error) {
-    handleError(error, "licencia.service -> createLicenciaPorRut");
+      handleError(error, "licencia.service -> createLicenciaPorRut");
   }
 }
-
 
 /**
  * Retrieves all licenses from the database.

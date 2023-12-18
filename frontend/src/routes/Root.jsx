@@ -44,7 +44,7 @@ function PageRoot() {
           >
             Home 
           </button>
-          <h1>Aqui deberia ir un header</h1>
+          <h1>Bienvenido Funcionario</h1>
           <p>Estas logeado como: {user.email}</p>
           <button onClick={handleLogout}>Cerrar sesion</button>
         </div>

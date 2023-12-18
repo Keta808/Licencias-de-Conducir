@@ -1,38 +1,52 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useForm } from 'react-hook-form';
 import { createLicenciaPorRut } from '../services/licencia.service';
-import "../../styles/licencia.css"; // Asegúrate de tener el archivo CSS adecuado
+// import "../../styles/licencia.css"; // Asegúrate de tener el archivo CSS adecuado
 
 function CrearLicenciaForm() {
-    const navigate = useNavigate();
+   
 
-    const {
+    const { 
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm();
+    } = useForm(); 
 
-    const onSubmit = async (licenciadata) => {
-        const { rut, TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = licenciadata;
+    
 
+    const onSubmit = async (licenciaData) => {
+        const { rut, TipoLicencia, FechaRetiro, EstadoLicencia, pdfDocumento } = licenciaData; 
+        // Manipula la fecha aquí 
+        const fecha = new Date(FechaRetiro); 
+        fecha.setDate(fecha.getDate() + 1); 
+     
+    
         const formData = new FormData();
         formData.append('TipoLicencia', TipoLicencia);
-        formData.append('FechaRetiro', FechaRetiro);
+        formData.append('FechaRetiro', fecha); 
         formData.append('EstadoLicencia', EstadoLicencia);
-        formData.append('pdfDocumento', pdfDocumento[0]); // Asumiendo que 'Archivo' es un array de archivos
-
+        formData.append('pdfDocumento', pdfDocumento[0]);
+    
         try {
-            await createLicenciaPorRut(rut, formData);
-            navigate('/');
+            const response = await createLicenciaPorRut(rut, formData);
+            console.log("Respuesta del backend:", response); 
+            console.log("response.state", response.state);
+            // Verificar si la creación de la licencia fue exitosa
+            if (response.state === 'Success') {
+                alert("Licencia creada exitosamente");
+                window.location.reload(); // Recarga la página actual
+            } else {
+                alert("Hubo un problema al crear la licencia");
+            }   
         } catch (error) {
             console.error("Error al crear licencia", error);
-            // Manejar el error según tus necesidades (por ejemplo, mostrar un mensaje al usuario)
         }
     };
 
     return (
-        <div>
+        <div> 
+            
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div>
                     <label htmlFor="rut">RUT del Usuario:</label>
