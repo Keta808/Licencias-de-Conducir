@@ -2,7 +2,7 @@
 import HorasConRut from '../components/HorasConRut';
 import HorasSinRut from '../components/HorasSinRut';
 import HorasForm from '../components/HorasForm';
-import "../../styles/horas.css";
+
 
 
 const horas = () => {
@@ -14,7 +14,7 @@ const horas = () => {
             <HorasForm/>
             <HorasConRut/>
             
-            <h1>Horas Sin Asignar</h1>
+  
 
             <HorasSinRut/>
             

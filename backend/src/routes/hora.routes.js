@@ -21,8 +21,7 @@ router.post("/", authorizationMiddleware.isAdmin,
     authorizationMiddleware.isFuncionario, horaController.createHora);
 
 // get una hora por id.
-router.get("/:id", authorizationMiddleware.isAdmin,
-    authorizationMiddleware.isFuncionario, horaController.getHoraById);
+router.get("/:id", horaController.getHoraById);
 
 // put una hora por id.
 router.put("/:id",
@@ -38,9 +37,15 @@ authorizationMiddleware.isFuncionario,
 horaController.deleteHora,
 );
 
+// ver las horas asociadas a un RUT
+router.get("/ver/:rut", horaController.verHoras);
+
 // put para asignar una hora a un usuario mediante el rut de la sesion
 router.put("/asignar/:id", horaController.elegirHora);
 
+router.put("/liberar/:id",
+    horaController.liberarHora
+);
 module.exports = router;
 
 

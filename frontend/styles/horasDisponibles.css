@@ -1,0 +1,23 @@
+/* horas.css */
+.horas-container {
+    margin-top: 20px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #000000;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  
+  .actions-column {
+    width: 1%;
+    white-space: nowrap;
+  }
+  
